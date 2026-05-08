@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Badly Drawn Heroes</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="drawing.js" defer></script>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/drawing.js" defer></script>
 </head>
 
 <body>
-    <canvas id="drawCanvas" width="400" height="400"></canvas>
-    <canvas id="ea1Canvas" width="400" height="400"></canvas>
+    <div class="input-canvas-stack">
+        <img id="frame" src="img/ui/frame.png">
+        <canvas id="picCanvas"></canvas>
+        <canvas id="drawCanvas"></canvas>
+    </div>
 </body>
 
 </html>
