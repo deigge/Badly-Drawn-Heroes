@@ -1,0 +1,12 @@
+services:
+  web:
+    image: httpd:latest
+    container_name: local-apache
+
+    ports:
+      - "8080:80"
+
+    volumes:
+      - ../:/usr/local/apache2/htdocs/
+
+    restart: on-failure
