@@ -1,47 +1,59 @@
 body {
-    margin: 0;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .input-canvas-stack {
-    position: relative;
-    margin: 0 auto;
+  position: relative;
+  margin: 0 auto;
+  width: 400px;
+  height: 400px;
+
+  canvas {
+    position: absolute;
     width: 400px;
     height: 400px;
+    top: 0;
+    left: 0;
+  }
 
-    canvas {
-        position: absolute;
-        width: 400px;
-        height: 400px;
-        top: 0;
-        left: 0;
-    }
+  #picCanvas {
+    z-index: 0;
+    background: rgb(255, 241, 212);
+  }
 
-    #picCanvas {
-        z-index: 0;
-        background: rgb(255, 241, 212)
-    }
+  #drawCanvas {
+    z-index: 1;
+  }
 
-    #drawCanvas {
-        z-index: 1;
-    }
+  #frame {
+    position: absolute;
+    z-index: 2;
 
-    #frame {
-        position: absolute;
-        z-index: 2;
+    /* größer als Canvas */
+    width: 460px;
+    height: 460px;
 
-        /* größer als Canvas */
-        width: 460px;
-        height: 460px;
+    /* zentriert über dem Canvas */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 
-        /* zentriert über dem Canvas */
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
 
-        pointer-events: none;
-    }
+  #debug {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    font-family: monospace;
+    font-size: 12px;
+    z-index: 1000;
+  }
 }

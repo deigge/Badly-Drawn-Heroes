@@ -1,19 +1,27 @@
+<!doctype html>
 <html lang="de">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Badly Drawn Heroes</title>
-    <link rel="stylesheet" href="css/style.css">
-    <script src="js/drawing.js" defer></script>
-</head>
+    <link rel="stylesheet" href="css/style.css" />
+    <script type="module" src="./js/main.js"></script>
+  </head>
 
-<body>
-    <div class="input-canvas-stack">
-        <img id="frame" src="img/ui/frame.png">
-        <canvas id="picCanvas"></canvas>
-        <canvas id="drawCanvas"></canvas>
+  <body>
+    <div id="debug"></div>
+    <canvas id="playArea"></canvas>
+
+    <div id="interactionElements">
+      <button class="interactionButton">Interaktion 1</button>
+      <button class="interactionButton">Interaktion 2</button>
+
+      <div id="playerAttackArea" class="input-canvas-stack">
+        <img id="frame" src="img/ui/frame.png" />
+      </div>
+
+      <button class="interactionButton">Interaktion 3</button>
+      <button class="interactionButton">Interaktion 4</button>
     </div>
-</body>
-
+  </body>
 </html>
