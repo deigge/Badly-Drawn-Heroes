@@ -12,6 +12,12 @@ export class GameLoop {
     this.debug = new DebugOverlay();
   }
 
+  setScene(scene) {
+    this.scene.destroy?.();
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    this.scene = scene;
+  }
+
   start() {
     requestAnimationFrame(this.loop.bind(this));
   }
@@ -27,7 +33,7 @@ export class GameLoop {
     this.scene.update(delta);
 
     // 2. RENDER
-    this.scene.render(this.ctx);
+    this.scene.render();
 
     // 3. DEBUG OUTPUT (DIV)
     this.debug.update({

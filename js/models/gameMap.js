@@ -8,7 +8,9 @@ export class GameMap {
   static #RECOVERY_MIN = 0;
   static #RECOVERY_MAX = 1;
 
-  #levels = [];
+  #level = [];
+  #currentlevel;
+  #currentLevelIndex = 0;
 
   constructor() {
     this.#generate();
@@ -38,7 +40,8 @@ export class GameMap {
         .map(() => new GameLevel(LEVEL_TYPES.RECOVERY)),
     ];
 
-    this.#levels = GameMap.#shuffle(levels);
+    this.#level = GameMap.#shuffle(levels);
+    this.#currentlevel = this.#level[0];
   }
 
   // ---------- helpers ----------
@@ -58,14 +61,35 @@ export class GameMap {
   // ---------- public ----------
 
   getAllLevel() {
-    return this.#levels;
+    return this.#level;
   }
 
   getLevel(index) {
-    return this.#levels[index];
+    return this.#level[index];
+  }
+
+  getCurrentLevel() {
+    return this.#currentlevel;
   }
 
   getLevelCount() {
-    return this.#levels.length;
+    return this.#level.length;
+  }
+
+  getCurrentLevelIndex() {
+    return this.#currentLevelIndex;
+  }
+
+  nextLevel() {
+    if (this.hasNextLevel()) {
+      this.#currentLevelIndex++;
+      this.#currentlevel = this.#level[this.#currentLevelIndex];
+      return this.#currentlevel;
+    }
+    return null;
+  }
+
+  hasNextLevel() {
+    return this.#currentLevelIndex < this.#level.length - 1;
   }
 }

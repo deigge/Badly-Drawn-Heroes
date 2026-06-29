@@ -3,7 +3,11 @@ export class Scene {
     throw new Error("update() must be implemented");
   }
 
-  render(ctx) {
+  render() {
     throw new Error("render() must be implemented");
+  }
+
+  destroy() {
+    throw new Error("destroy() must be implemented");
   }
 }

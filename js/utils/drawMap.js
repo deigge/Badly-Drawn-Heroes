@@ -17,7 +17,7 @@ export function drawMap(map, selectedLevelIndex = null) {
   canvas.height = height;
   const ctx = canvas.getContext("2d");
 
-  let x = nodeRadius + selectedLevelIndex;
+  let x = nodeRadius + levelBorderWidth;
   const centerY = canvas.height / 2;
 
   for (let i = 0; i < levelCount; i++) {

@@ -18,4 +18,8 @@ export class GameLevel {
   getType() {
     return this.#type;
   }
+
+  getBackgroundImage() {
+    return `./img/level/${this.#type}_level.png`;
+  }
 }

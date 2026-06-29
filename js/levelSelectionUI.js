@@ -23,7 +23,10 @@ export class LevelSelectionUI {
         this.#maps.length - 1,
         this.#selectedIndex + 1,
       );
-    if (e.key === "Enter") this.#onSelect(this.#selectedIndex);
+    if (e.key === "Enter") {
+      this.#onSelect(this.#selectedIndex);
+      return;
+    }
     this.render();
   };
 
@@ -58,10 +61,14 @@ export class LevelSelectionUI {
         this.#ctx.fill();
       }
 
-      const mapCanvas = drawMap(this.#maps[j], 1);
+      const mapCanvas = drawMap(this.#maps[j]);
       this.#ctx.drawImage(mapCanvas, x, y);
 
       y += ySpacing;
     }
+  }
+
+  destroy() {
+    document.removeEventListener("keydown", this.#handleKey);
   }
 }

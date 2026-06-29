@@ -1,6 +1,4 @@
 export class AttackCanvas {
-  static #SIZE = 200;
-
   #picCanvas;
   #drawCanvas;
   #picCtx;
@@ -22,24 +20,28 @@ export class AttackCanvas {
     this.#picCtx = this.#picCanvas.getContext("2d");
     this.#drawCtx = this.#drawCanvas.getContext("2d");
 
-    this.#setSize(AttackCanvas.#SIZE);
+    this.#setSize();
     this.#loadImage("img/sun.svg");
     this.#registerEvents();
   }
 
   // ===== SETUP =====
 
-  #setSize(size) {
-    this.#picCanvas.width = size;
-    this.#picCanvas.height = size;
-    this.#drawCanvas.width = size;
-    this.#drawCanvas.height = size;
+  #setSize() {
+    const container = this.#drawCanvas.parentElement;
+    const cssSize = container.getBoundingClientRect().width;
+
+    this.#picCanvas.width = cssSize;
+    this.#picCanvas.height = cssSize;
+    this.#drawCanvas.width = cssSize;
+    this.#drawCanvas.height = cssSize;
   }
 
   #loadImage(src) {
     const img = new Image();
-    const svgSize = AttackCanvas.#SIZE * 0.8;
-    const offset = (AttackCanvas.#SIZE - svgSize) / 2;
+    const size = this.#picCanvas.width;
+    const svgSize = size * 0.8;
+    const offset = (size - svgSize) / 2;
 
     img.onload = () =>
       this.#picCtx.drawImage(img, offset, offset, svgSize, svgSize);
@@ -58,9 +60,11 @@ export class AttackCanvas {
 
   #getMousePos(e) {
     const rect = this.#drawCanvas.getBoundingClientRect();
+    const scaleX = this.#drawCanvas.width / rect.width;
+    const scaleY = this.#drawCanvas.height / rect.height;
     return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY,
     };
   }
 
