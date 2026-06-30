@@ -60,7 +60,7 @@ export class GameMap {
 
   // ---------- public ----------
 
-  getAllLevel() {
+  get allLevel() {
     return this.#level;
   }
 
@@ -68,19 +68,19 @@ export class GameMap {
     return this.#level[index];
   }
 
-  getCurrentLevel() {
+  get currentLevel() {
     return this.#currentlevel;
   }
 
-  getLevelCount() {
+  get levelCount() {
     return this.#level.length;
   }
 
-  getCurrentLevelIndex() {
+  get currentLevelIndex() {
     return this.#currentLevelIndex;
   }
 
-  nextLevel() {
+  get nextLevel() {
     if (this.hasNextLevel()) {
       this.#currentLevelIndex++;
       this.#currentlevel = this.#level[this.#currentLevelIndex];

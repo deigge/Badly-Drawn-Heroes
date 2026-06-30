@@ -10,15 +10,13 @@ class GameStateClass {
     this.#playerHealth = 100;
   }
 
-  setMap(map) {
+  set map(map) {
     this.#currentMap = map;
   }
 
-  getMap() {
+  get map() {
     return this.#currentMap;
   }
-
-  getNextLevel() {}
 }
 
 export const GameState = new GameStateClass();

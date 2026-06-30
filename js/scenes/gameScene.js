@@ -13,7 +13,7 @@ export class GameScene extends Scene {
     this.#ctx = ctx;
     this.#switcher = switcher;
 
-    this.#mapCanvas = drawMap(GameState.getMap(), 0);
+    this.#mapCanvas = drawMap(GameState.map, 0);
     this.#changeBackground();
 
     document.addEventListener("keydown", this.#handleKey);
@@ -21,12 +21,12 @@ export class GameScene extends Scene {
 
   #handleKey = (e) => {
     if (e.key === "Enter") {
-      const nextLevel = GameState.getMap().nextLevel();
+      const nextLevel = GameState.map.nextLevel;
 
       if (nextLevel != null) {
         this.#mapCanvas = drawMap(
-          GameState.getMap(),
-          GameState.getMap().getCurrentLevelIndex(),
+          GameState.map,
+          GameState.map.currentLevelIndex,
         );
         this.#changeBackground();
       } else {
@@ -41,9 +41,7 @@ export class GameScene extends Scene {
   };
 
   #changeBackground() {
-    this.#background.src = GameState.getMap()
-      .getCurrentLevel()
-      .getBackgroundImage();
+    this.#background.src = GameState.map.currentLevel.backgroundImage;
   }
 
   update() {

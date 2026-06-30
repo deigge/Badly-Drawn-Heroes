@@ -20,7 +20,7 @@ export class LevelSelection extends Scene {
   }
 
   #mapSelected(index) {
-    GameState.setMap(this.#maps[index]);
+    GameState.map = this.#maps[index];
     this.#switcher.notify("game");
   }
 

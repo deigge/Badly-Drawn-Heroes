@@ -15,11 +15,11 @@ export class GameLevel {
     this.#type = type;
   }
 
-  getType() {
+  get type() {
     return this.#type;
   }
 
-  getBackgroundImage() {
+  get backgroundImage() {
     return `./img/level/${this.#type}_level.png`;
   }
 }

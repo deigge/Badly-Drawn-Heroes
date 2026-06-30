@@ -16,7 +16,7 @@ export class FinishedScene extends Scene {
     this.#ctx = ctx;
     this.#switcher = switcher;
 
-    this.#mapCanvas = drawMap(GameState.getMap());
+    this.#mapCanvas = drawMap(GameState.map);
 
     this.#finishA.src = "../img/ui/finish_screen_a.png";
     this.#finishB.src = "../img/ui/finish_screen_b.png";

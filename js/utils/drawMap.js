@@ -6,7 +6,7 @@ export function drawMap(map, selectedLevelIndex = null) {
   const xSpacing = 80;
   const nodeRadius = NODE_RADIUS;
   const levelBorderWidth = 2;
-  const levelCount = map.getLevelCount();
+  const levelCount = map.levelCount;
 
   const width =
     (levelCount - 1) * xSpacing + (nodeRadius + levelBorderWidth) * 2;
@@ -32,7 +32,7 @@ export function drawMap(map, selectedLevelIndex = null) {
     ctx.beginPath();
     ctx.arc(x, centerY, nodeRadius, 0, Math.PI * 2);
 
-    ctx.fillStyle = Colors.level[map.getLevel(i).getType()];
+    ctx.fillStyle = Colors.level[map.getLevel(i).type];
 
     ctx.fill();
 

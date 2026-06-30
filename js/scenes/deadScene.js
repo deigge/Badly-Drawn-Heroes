@@ -16,10 +16,7 @@ export class DeadScene extends Scene {
     this.#ctx = ctx;
     this.#switcher = switcher;
 
-    this.#mapCanvas = drawMap(
-      GameState.getMap(),
-      GameState.getMap().getCurrentLevelIndex(),
-    );
+    this.#mapCanvas = drawMap(GameState.map, GameState.map.currentLevelIndex);
 
     this.#deadA.src = "../img/ui/dead_screen_a.png";
     this.#deadB.src = "../img/ui/dead_screen_b.png";
