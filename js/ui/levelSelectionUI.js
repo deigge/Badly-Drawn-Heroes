@@ -1,4 +1,5 @@
-import { drawMap, NODE_RADIUS } from "./utils/drawMap.js";
+import { drawMap, NODE_RADIUS } from "../utils/drawMap.js";
+import { playerRenderer } from "./playerRenderer.js";
 
 export class LevelSelectionUI {
   #ctx;
@@ -27,8 +28,11 @@ export class LevelSelectionUI {
       this.#onSelect(this.#selectedIndex);
       return;
     }
-    this.render();
   };
+
+  update(delta) {
+    playerRenderer.update(delta);
+  }
 
   render() {
     const xStart = 450;
@@ -39,6 +43,11 @@ export class LevelSelectionUI {
 
     const xSpacing = 80;
     const ySpacing = xSpacing + 20;
+
+    this.#ctx.clearRect(0, 0, this.#ctx.canvas.width, this.#ctx.canvas.height);
+
+    const playerCanvas = playerRenderer.getFrame();
+    if (playerCanvas) this.#ctx.drawImage(playerCanvas, 150, 150);
 
     for (let j = 0; j < this.#maps.length; j++) {
       const cursorX = x - 40;

@@ -9,4 +9,9 @@ export const Colors = {
       connection: "rgb(65, 65, 65)",
     },
   },
+
+  healthbar: {
+    background: "rgb(167, 167, 167)",
+    border: "rgb(0, 0, 0)",
+  },
 };

@@ -1,6 +1,10 @@
 import { Scene } from "../core/scene.js";
 import { GameState } from "../models/gameState.js";
 import { drawMap } from "../utils/drawMap.js";
+import { playerRenderer } from "../ui/playerRenderer.js";
+import { player } from "../models/player.js";
+import { drawHealthbar } from "../utils/drawHealthbar.js";
+import { Colors } from "../utils/colors.js";
 
 export class GameScene extends Scene {
   #mapCanvas;
@@ -44,12 +48,23 @@ export class GameScene extends Scene {
     this.#background.src = GameState.map.currentLevel.backgroundImage;
   }
 
-  update() {
-    // Spiellogik
+  update(delta) {
+    playerRenderer.update(delta);
   }
 
   render() {
     this.#ctx.drawImage(this.#background, 0, 0);
+
+    const playerCanvas = playerRenderer.getFrame();
+    this.#ctx.drawImage(playerCanvas, 150, 250);
+
+    const healthbarCanvas = drawHealthbar(
+      player.currentHealth,
+      player.maxHealth,
+      Colors.level.normal,
+    );
+    this.#ctx.drawImage(healthbarCanvas, 150, this.#ctx.canvas.height - 50);
+
     this.#ctx.drawImage(
       this.#mapCanvas,
       this.#ctx.canvas.width / 2 - this.#mapCanvas.width / 2,

@@ -1,4 +1,4 @@
-import { LevelSelectionUI } from "../levelSelectionUI.js";
+import { LevelSelectionUI } from "../ui/levelSelectionUI.js";
 import { GameState } from "../models/gameState.js";
 import { GameMap } from "../models/gameMap.js";
 import { Scene } from "../core/scene.js";
@@ -24,7 +24,9 @@ export class LevelSelection extends Scene {
     this.#switcher.notify("game");
   }
 
-  update() {}
+  update(delta) {
+    this.#ui.update(delta);
+  }
 
   render(ctx) {
     this.#ui.render(ctx);

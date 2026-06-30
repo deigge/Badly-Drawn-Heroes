@@ -22,7 +22,7 @@ export class DeadScene extends Scene {
     this.#deadB.src = "../img/ui/dead_screen_b.png";
   }
 
-  update() {}
+  update(delta) {}
 
   render() {
     const y = 50;

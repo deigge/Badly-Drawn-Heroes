@@ -22,7 +22,7 @@ export class FinishedScene extends Scene {
     this.#finishB.src = "../img/ui/finish_screen_b.png";
   }
 
-  update() {}
+  update(delta) {}
 
   render() {
     const y = 50;

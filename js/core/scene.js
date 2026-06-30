@@ -1,5 +1,5 @@
 export class Scene {
-  update() {
+  update(delta) {
     throw new Error("update() must be implemented");
   }
 
