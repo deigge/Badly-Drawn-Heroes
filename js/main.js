@@ -1,4 +1,4 @@
-import { AttackCanvas } from "./attackCanvas.js";
+import { AttackCanvas } from "./ui/attackCanvas.js";
 import { LevelSelection } from "./scenes/levelSelectionScene.js";
 import { GameLoop } from "./core/gameLoop.js";
 import { GameScene } from "./scenes/gameScene.js";
@@ -21,7 +21,8 @@ function init() {
   const gameloop = new GameLoop(new LevelSelection(ctx, switcher), ctx);
 
   switcher.onSceneComplete(function (nextScene) {
-    if (nextScene === "game") gameloop.setScene(new GameScene(ctx, switcher));
+    if (nextScene === "game")
+      gameloop.setScene(new GameScene(ctx, switcher, attackCanvas));
     if (nextScene === "finished")
       gameloop.setScene(new FinishedScene(ctx, switcher));
     if (nextScene === "dead") gameloop.setScene(new DeadScene(ctx, switcher));

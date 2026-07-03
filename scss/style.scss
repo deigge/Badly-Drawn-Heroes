@@ -61,6 +61,7 @@ body {
   font-size: 1.5rem;
   padding: 3%;
   white-space: nowrap;
+  min-width: 13rem;
 }
 
 #debug {
@@ -83,4 +84,19 @@ body {
   border-style: solid;
   border-width: 0.2rem;
   border-radius: 1rem;
+}
+
+#drawTimer {
+  font-size: 2rem;
+  font-weight: bold;
+  background-color: brown;
+  padding-right: 2rem;
+  padding-left: 2rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-radius: 1rem;
+  border-style: solid;
+  border-width: 0.2rem;
+  border-color: black;
+  visibility: hidden;
 }

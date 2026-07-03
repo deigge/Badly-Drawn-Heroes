@@ -5,20 +5,30 @@ import { playerRenderer } from "../ui/playerRenderer.js";
 import { player } from "../models/player.js";
 import { drawHealthbar } from "../utils/drawHealthbar.js";
 import { Colors } from "../utils/colors.js";
+import { Attacks } from "../models/attacks.js";
+import { AttackCanvas } from "../ui/attackCanvas.js";
+import { Timer } from "../utils/timer.js";
 
 export class GameScene extends Scene {
   #mapCanvas;
   #switcher;
   #ctx;
   #background = new Image();
+  #attackCanvas;
+  #attacks;
+  #attackTimer = new Timer(6);
 
-  constructor(ctx, switcher) {
+  constructor(ctx, switcher, attackCanvas) {
     super();
     this.#ctx = ctx;
     this.#switcher = switcher;
+    this.#attackCanvas = attackCanvas;
 
     this.#mapCanvas = drawMap(GameState.map, 0);
     this.#changeBackground();
+
+    this.#attacks = new Attacks();
+    this.#attacks.init();
 
     document.addEventListener("keydown", this.#handleKey);
   }
@@ -39,6 +49,9 @@ export class GameScene extends Scene {
       return;
     } else if (e.key === "Backspace") {
       this.#switcher.notify("dead");
+      return;
+    } else if (e.code === "Space") {
+      this.loadAttack();
       return;
     }
     this.render();
@@ -69,6 +82,23 @@ export class GameScene extends Scene {
       this.#mapCanvas,
       this.#ctx.canvas.width / 2 - this.#mapCanvas.width / 2,
       30,
+    );
+  }
+
+  loadAttack() {
+    const attackIcon = this.#attacks.getRandomLightAttack();
+    this.#attackCanvas.drawSprite(attackIcon);
+
+    let timer = document.getElementById("drawTimer");
+    timer.style.visibility = "visible";
+
+    this.#attackTimer.start(
+      (remaining) => {
+        timer.textContent = remaining;
+      },
+      () => {
+        timer.style.visibility = "hidden";
+      },
     );
   }
 

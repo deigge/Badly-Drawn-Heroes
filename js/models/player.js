@@ -1,4 +1,4 @@
-import { SpriteSheetLoader, Character } from "../utils/spritesheetLoader.js";
+import { SpriteSheetLoader, SpriteType } from "../utils/spritesheetLoader.js";
 
 class Player {
   #spritesheet;
@@ -9,12 +9,12 @@ class Player {
     this.#spritesheet = null;
     this.#currentHealth = this.#maxHealth;
 
-    this.init();
+    this.#init();
   }
 
-  async init() {
+  async #init() {
     const loader = new SpriteSheetLoader();
-    this.#spritesheet = await loader.load(Character.PLAYER);
+    this.#spritesheet = await loader.load(SpriteType.PLAYER);
   }
 
   get spritesheet() {

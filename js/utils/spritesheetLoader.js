@@ -1,6 +1,7 @@
-export const Character = {
+export const SpriteType = {
   PLAYER: "player",
   NORMAL_ENEMY: "normalEnemy",
+  ATTACKS: "attacks",
 };
 
 const REGISTRY = {
@@ -12,18 +13,38 @@ const REGISTRY = {
     sheet: "./assets/enemies/slime.png",
     json: "./assets/enemies/slime.json",
   },
+  attacks: {
+    sheet: "./img/attacks/light_attack_spritesheet.png",
+    json: "./img/attacks/light_attack_spritesheet.json",
+  },
 };
+
+class SpriteSheet {
+  constructor(image, groups) {
+    this.image = image;
+    this.groups = groups;
+  }
+
+  getRandomFrame(groupName) {
+    const frames = this.groups[groupName];
+    if (!frames || frames.length === 0) {
+      throw new Error(`No frames found for group "${groupName}"`);
+    }
+    const index = Math.floor(Math.random() * frames.length);
+    return frames[index];
+  }
+
+  getFrame(groupName, index) {
+    return this.groups[groupName][index];
+  }
+}
 
 export class SpriteSheetLoader {
   async load(character) {
     const entry = REGISTRY[character];
     const json = await fetch(entry.json).then((r) => r.json());
     const image = await this.#loadImage(entry.sheet);
-
-    return {
-      image,
-      animations: this.#groupFrames(json),
-    };
+    return new SpriteSheet(image, this.#groupFrames(json));
   }
 
   #groupFrames(frames) {

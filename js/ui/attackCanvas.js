@@ -21,7 +21,7 @@ export class AttackCanvas {
     this.#drawCtx = this.#drawCanvas.getContext("2d");
 
     this.#setSize();
-    this.#loadImage("img/sun.svg");
+    //this.loadImage("img/sun.svg");
     this.#registerEvents();
   }
 
@@ -48,6 +48,20 @@ export class AttackCanvas {
     img.onerror = (err) =>
       console.error("AttackCanvas: Failed to load image:", err);
     img.src = src;
+  }
+
+  drawSprite(spriteCanvas) {
+    const size = this.#picCanvas.width;
+    const targetSize = size * 0.8;
+    const offset = (size - targetSize) / 2;
+    this.#picCtx.clearRect(0, 0, size, size);
+    this.#picCtx.drawImage(
+      spriteCanvas,
+      offset,
+      offset,
+      targetSize,
+      targetSize,
+    );
   }
 
   #registerEvents() {
