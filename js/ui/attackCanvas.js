@@ -4,6 +4,7 @@ export class AttackCanvas {
   #picCtx;
   #drawCtx;
   #pos = { x: 0, y: 0 };
+  #drawingEnabled = false;
 
   constructor(containerId) {
     const container = document.getElementById(containerId);
@@ -37,19 +38,6 @@ export class AttackCanvas {
     this.#drawCanvas.height = cssSize;
   }
 
-  #loadImage(src) {
-    const img = new Image();
-    const size = this.#picCanvas.width;
-    const svgSize = size * 0.8;
-    const offset = (size - svgSize) / 2;
-
-    img.onload = () =>
-      this.#picCtx.drawImage(img, offset, offset, svgSize, svgSize);
-    img.onerror = (err) =>
-      console.error("AttackCanvas: Failed to load image:", err);
-    img.src = src;
-  }
-
   drawSprite(spriteCanvas) {
     const size = this.#picCanvas.width;
     const targetSize = size * 0.8;
@@ -70,6 +58,10 @@ export class AttackCanvas {
     this.#drawCanvas.addEventListener("mouseenter", this.#setPosition);
   }
 
+  getBothCanvas() {
+    return { picCanvas: this.#picCanvas, drawCanvas: this.#drawCanvas };
+  }
+
   // ===== DRAWING =====
 
   #getMousePos(e) {
@@ -83,10 +75,12 @@ export class AttackCanvas {
   }
 
   #setPosition = (e) => {
+    if (!this.#drawingEnabled) return;
     this.#pos = this.#getMousePos(e);
   };
 
   #draw = (e) => {
+    if (!this.#drawingEnabled) return;
     if (e.buttons !== 1) return;
     const newPos = this.#getMousePos(e);
     this.#drawCtx.beginPath();
@@ -99,12 +93,24 @@ export class AttackCanvas {
     this.#pos = newPos;
   };
 
-  clearDrawing() {
+  clear() {
     this.#drawCtx.clearRect(
       0,
       0,
       this.#drawCanvas.width,
       this.#drawCanvas.height,
     );
+
+    this.#picCtx.clearRect(0, 0, this.#picCanvas.width, this.#picCanvas.height);
+  }
+
+  disableDrawing() {
+    this.#drawingEnabled = false;
+    this.#drawCanvas.style.cursor = "not-allowed";
+  }
+
+  enableDrawing() {
+    this.#drawingEnabled = true;
+    this.#drawCanvas.style.cursor = "crosshair"; // oder was auch immer du normal nutzt
   }
 }

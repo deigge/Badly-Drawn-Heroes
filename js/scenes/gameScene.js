@@ -8,6 +8,7 @@ import { Colors } from "../utils/colors.js";
 import { Attacks } from "../models/attacks.js";
 import { AttackCanvas } from "../ui/attackCanvas.js";
 import { Timer } from "../utils/timer.js";
+import { scoreAttack } from "../utils/scoreAttack.js";
 
 export class GameScene extends Scene {
   #mapCanvas;
@@ -88,6 +89,7 @@ export class GameScene extends Scene {
   loadAttack() {
     const attackIcon = this.#attacks.getRandomLightAttack();
     this.#attackCanvas.drawSprite(attackIcon);
+    this.#attackCanvas.enableDrawing();
 
     let timer = document.getElementById("drawTimer");
     timer.style.visibility = "visible";
@@ -98,6 +100,11 @@ export class GameScene extends Scene {
       },
       () => {
         timer.style.visibility = "hidden";
+        const { picCanvas, drawCanvas } = this.#attackCanvas.getBothCanvas();
+        const damageTier = scoreAttack(picCanvas, drawCanvas);
+
+        this.#attackCanvas.disableDrawing();
+        this.#attackCanvas.clear();
       },
     );
   }
