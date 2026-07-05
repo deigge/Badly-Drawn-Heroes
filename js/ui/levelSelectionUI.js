@@ -7,7 +7,6 @@ export class LevelSelectionUI {
   #maps;
   #onSelect;
   #selectedIndex = 0;
-  #playerRenderer = new EntityRenderer(player, "playerIdle");
 
   constructor(ctx, maps, onSelect) {
     this.#ctx = ctx;
@@ -33,7 +32,7 @@ export class LevelSelectionUI {
   };
 
   update(delta) {
-    this.#playerRenderer.update(delta);
+    player.renderer.update(delta);
   }
 
   render() {
@@ -48,7 +47,7 @@ export class LevelSelectionUI {
 
     this.#ctx.clearRect(0, 0, this.#ctx.canvas.width, this.#ctx.canvas.height);
 
-    const playerCanvas = this.#playerRenderer.getFrame();
+    const playerCanvas = player.renderer.getFrame();
     if (playerCanvas) this.#ctx.drawImage(playerCanvas, 150, 150);
 
     for (let j = 0; j < this.#maps.length; j++) {

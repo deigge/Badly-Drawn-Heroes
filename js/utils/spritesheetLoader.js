@@ -10,8 +10,8 @@ const REGISTRY = {
     json: "./img/player/player_spritesheet.json",
   },
   normalEnemy: {
-    sheet: "./assets/enemies/slime.png",
-    json: "./assets/enemies/slime.json",
+    sheet: "./img/normal_enemy/normal_enemy_spritesheet.png",
+    json: "./img/normal_enemy/normal_enemy_spritesheet.json",
   },
   attacks: {
     sheet: "./img/attacks/light_attack_spritesheet.png",

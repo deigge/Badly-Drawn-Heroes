@@ -1,3 +1,7 @@
+window.addEventListener("unhandledrejection", (event) => {
+  console.error("Unhandled promise rejection:", event.reason);
+});
+
 import { AttackCanvas } from "./ui/attackCanvas.js";
 import { LevelSelection } from "./scenes/levelSelectionScene.js";
 import { GameLoop } from "./core/gameLoop.js";
@@ -6,10 +10,10 @@ import { SceneSwitcher } from "./core/sceneSwitcher.js";
 import { FinishedScene } from "./scenes/finishedScene.js";
 import { DeadScene } from "./scenes/deadScene.js";
 
-function init() {
+async function init() {
   const attackCanvas = new AttackCanvas("playerAttackArea");
-
   const canvas = document.getElementById("playArea");
+
   canvas.width = canvas.offsetWidth;
   canvas.height = canvas.offsetHeight;
 
@@ -17,8 +21,8 @@ function init() {
   ctx.imageSmoothingEnabled = false;
 
   const switcher = new SceneSwitcher();
-
-  const gameloop = new GameLoop(new LevelSelection(ctx, switcher), ctx);
+  const levelSelection = await LevelSelection.create(ctx, switcher);
+  const gameloop = new GameLoop(levelSelection, ctx);
 
   switcher.onSceneComplete(function (nextScene) {
     if (nextScene === "game")
@@ -31,4 +35,4 @@ function init() {
   gameloop.start();
 }
 
-document.addEventListener("DOMContentLoaded", init);
+init();

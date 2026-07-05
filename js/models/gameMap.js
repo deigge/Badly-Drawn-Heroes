@@ -12,33 +12,33 @@ export class GameMap {
   #currentlevel;
   #currentLevelIndex = 0;
 
-  constructor() {
-    this.#generate();
+  static async create() {
+    const map = new this();
+    await map.#generate();
+    return map;
   }
 
   // ---------- generation ----------
 
-  #generate() {
+  async #generate() {
     const bossCount = GameMap.#randInt(GameMap.#BOSS_MIN, GameMap.#BOSS_MAX);
-
     const recoveryCount = GameMap.#randInt(
       GameMap.#RECOVERY_MIN,
       GameMap.#RECOVERY_MAX,
     );
-
     const normalCount = GameMap.#TOTAL_LEVELS - bossCount - recoveryCount;
 
-    const levels = [
+    const levels = await Promise.all([
       ...Array(normalCount)
         .fill()
-        .map(() => new GameLevel(LEVEL_TYPES.NORMAL)),
+        .map(async () => await GameLevel.create(LEVEL_TYPES.NORMAL)),
       ...Array(bossCount)
         .fill()
-        .map(() => new GameLevel(LEVEL_TYPES.BOSS)),
+        .map(async () => await GameLevel.create(LEVEL_TYPES.BOSS)),
       ...Array(recoveryCount)
         .fill()
-        .map(() => new GameLevel(LEVEL_TYPES.RECOVERY)),
-    ];
+        .map(async () => await GameLevel.create(LEVEL_TYPES.RECOVERY)),
+    ]);
 
     this.#level = GameMap.#shuffle(levels);
     this.#currentlevel = this.#level[0];

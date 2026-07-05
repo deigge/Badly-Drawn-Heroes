@@ -12,11 +12,23 @@ export class LevelSelection extends Scene {
     super();
 
     this.#switcher = switcher;
+  }
 
-    for (let i = 0; i < 3; i++) this.#maps.push(new GameMap());
-    this.#ui = new LevelSelectionUI(ctx, this.#maps, (index) =>
-      this.#mapSelected(index),
+  static async create(ctx, switcher) {
+    const levelSelection = new this(ctx, switcher);
+    await levelSelection.#createMaps();
+
+    levelSelection.#ui = new LevelSelectionUI(
+      ctx,
+      levelSelection.#maps,
+      (index) => levelSelection.#mapSelected(index),
     );
+
+    return levelSelection;
+  }
+
+  async #createMaps() {
+    for (let i = 0; i < 3; i++) this.#maps.push(await GameMap.create());
   }
 
   #mapSelected(index) {

@@ -1,3 +1,5 @@
+import { NormalEnemy } from "./normalEnemy.js";
+
 export const LEVEL_TYPES = {
   NORMAL: "normal",
   BOSS: "boss",
@@ -6,6 +8,7 @@ export const LEVEL_TYPES = {
 
 export class GameLevel {
   #type;
+  #enemies;
 
   constructor(type) {
     if (!Object.values(LEVEL_TYPES).includes(type)) {
@@ -15,11 +18,38 @@ export class GameLevel {
     this.#type = type;
   }
 
+  static async create(type) {
+    const level = new this(type);
+    await level.#createEnemies();
+    return level;
+  }
+
   get type() {
     return this.#type;
   }
 
+  get enemies() {
+    return this.#enemies;
+  }
+
   get backgroundImage() {
     return `./img/level/${this.#type}_level.png`;
+  }
+
+  async #createEnemies() {
+    switch (this.#type) {
+      case LEVEL_TYPES.NORMAL:
+        this.#enemies = [
+          await NormalEnemy.create(),
+          await NormalEnemy.create(),
+        ];
+        break;
+      case LEVEL_TYPES.BOSS:
+        this.#enemies = []; // TODO: BossEnemy.create()
+        break;
+      case LEVEL_TYPES.RECOVERY:
+        this.#enemies = [];
+        break;
+    }
   }
 }

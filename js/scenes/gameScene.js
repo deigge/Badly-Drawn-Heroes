@@ -1,7 +1,6 @@
 import { Scene } from "../core/scene.js";
 import { GameState } from "../models/gameState.js";
 import { drawMap } from "../utils/drawMap.js";
-import { EntityRenderer } from "../ui/EntityRenderer.js";
 import { player } from "../models/player.js";
 import { drawHealthbar } from "../utils/drawHealthbar.js";
 import { Colors } from "../utils/colors.js";
@@ -17,7 +16,6 @@ export class GameScene extends Scene {
   #attackCanvas;
   #attacks;
   #attackTimer = new Timer(6);
-  #playerRenderer = new EntityRenderer(player, "playerIdle");
 
   constructor(ctx, switcher, attackCanvas) {
     super();
@@ -63,13 +61,17 @@ export class GameScene extends Scene {
   }
 
   update(delta) {
-    this.#playerRenderer.update(delta);
+    player.renderer.update(delta);
+
+    GameState.map.currentLevel.enemies.forEach((enemy) => {
+      enemy.renderer.update(delta);
+    });
   }
 
   render() {
     this.#ctx.drawImage(this.#background, 0, 0);
 
-    const playerCanvas = this.#playerRenderer.getFrame();
+    const playerCanvas = player.renderer.getFrame();
     this.#ctx.drawImage(playerCanvas, 150, 250);
 
     const healthbarCanvas = drawHealthbar(
@@ -78,6 +80,28 @@ export class GameScene extends Scene {
       Colors.level.normal,
     );
     this.#ctx.drawImage(healthbarCanvas, 150, this.#ctx.canvas.height - 50);
+
+    let enemyX = 600;
+
+    GameState.map.currentLevel.enemies.forEach((enemy) => {
+      const enemyCanvas = enemy.renderer.getFrame();
+
+      const enemyY = this.#ctx.canvas.height - enemyCanvas.height - 80;
+      this.#ctx.drawImage(enemyCanvas, enemyX, enemyY);
+
+      const healthbarCanvas = drawHealthbar(
+        enemy.currentHealth,
+        enemy.maxHealth,
+        Colors.level.boss,
+      );
+      this.#ctx.drawImage(
+        healthbarCanvas,
+        enemyX,
+        this.#ctx.canvas.height - 50,
+      );
+
+      enemyX += enemyCanvas.width + 50;
+    });
 
     this.#ctx.drawImage(
       this.#mapCanvas,
@@ -94,23 +118,44 @@ export class GameScene extends Scene {
     let timer = document.getElementById("drawTimer");
     timer.style.visibility = "visible";
 
-    this.#playerRenderer.playAnimation("playerAttack");
+    player.renderer.playAnimation("playerAttack");
 
     this.#attackTimer.start(
       (remaining) => {
         timer.textContent = remaining;
       },
       () => {
-        this.#playerRenderer.playAnimation("playerIdle");
+        player.renderer.playAnimation("playerIdle");
 
         timer.style.visibility = "hidden";
         const { picCanvas, drawCanvas } = this.#attackCanvas.getBothCanvas();
         const damageTier = scoreAttack(picCanvas, drawCanvas);
 
+        const enemies = GameState.map.currentLevel.enemies;
+        const target = enemies[0];
+        if (target) {
+          target.takeDamage(player.baseAttack * damageTier);
+          if (target.isDead) {
+            enemies.shift();
+            if (enemies.length === 0) {
+              this.#nextLevel();
+            }
+          }
+        }
+
         this.#attackCanvas.disableDrawing();
         this.#attackCanvas.clear();
       },
     );
+  }
+
+  #nextLevel() {
+    const nextLevel = GameState.map.nextLevel;
+
+    if (nextLevel != null) {
+      this.#mapCanvas = drawMap(GameState.map, GameState.map.currentLevelIndex);
+      this.#changeBackground();
+    }
   }
 
   destroy() {
