@@ -1,16 +1,15 @@
-import { player } from "../models/player.js";
 import { frameToCanvas } from "../utils/frameToCanvas.js";
 
-class PlayerRenderer {
-  #player;
+export class EntityRenderer {
+  #entity;
   #currentAnimName;
   #currentFrame;
   #animTimer;
   #frameDuration;
 
-  constructor() {
-    this.#player = player;
-    this.#currentAnimName = null;
+  constructor(entity, standardAnimation) {
+    this.#entity = entity;
+    this.#currentAnimName = standardAnimation;
     this.#currentFrame = 0;
     this.#animTimer = 0;
     this.#frameDuration = 200;
@@ -24,13 +23,9 @@ class PlayerRenderer {
   }
 
   update(delta) {
-    if (!this.#currentAnimName && this.#player.spritesheet) {
-      this.#currentAnimName = "playerIdle";
-    }
+    if (!this.#currentAnimName || !this.#entity.spritesheet) return;
 
-    if (!this.#currentAnimName || !this.#player.spritesheet) return;
-
-    const anim = this.#player.spritesheet.groups[this.#currentAnimName];
+    const anim = this.#entity.spritesheet.groups[this.#currentAnimName];
     if (!anim) return;
 
     this.#animTimer += delta;
@@ -41,14 +36,12 @@ class PlayerRenderer {
   }
 
   getFrame() {
-    if (!this.#player.spritesheet || !this.#currentAnimName) return null;
+    if (!this.#entity.spritesheet || !this.#currentAnimName) return null;
 
-    const frame = this.#player.spritesheet.getFrame(
+    const frame = this.#entity.spritesheet.getFrame(
       this.#currentAnimName,
       this.#currentFrame,
     );
-    return frameToCanvas(this.#player.spritesheet.image, frame);
+    return frameToCanvas(this.#entity.spritesheet.image, frame);
   }
 }
-
-export const playerRenderer = new PlayerRenderer();

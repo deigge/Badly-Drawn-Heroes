@@ -1,11 +1,13 @@
+import { player } from "../models/player.js";
 import { drawMap, NODE_RADIUS } from "../utils/drawMap.js";
-import { playerRenderer } from "./playerRenderer.js";
+import { EntityRenderer } from "./EntityRenderer.js";
 
 export class LevelSelectionUI {
   #ctx;
   #maps;
   #onSelect;
   #selectedIndex = 0;
+  #playerRenderer = new EntityRenderer(player, "playerIdle");
 
   constructor(ctx, maps, onSelect) {
     this.#ctx = ctx;
@@ -31,7 +33,7 @@ export class LevelSelectionUI {
   };
 
   update(delta) {
-    playerRenderer.update(delta);
+    this.#playerRenderer.update(delta);
   }
 
   render() {
@@ -46,7 +48,7 @@ export class LevelSelectionUI {
 
     this.#ctx.clearRect(0, 0, this.#ctx.canvas.width, this.#ctx.canvas.height);
 
-    const playerCanvas = playerRenderer.getFrame();
+    const playerCanvas = this.#playerRenderer.getFrame();
     if (playerCanvas) this.#ctx.drawImage(playerCanvas, 150, 150);
 
     for (let j = 0; j < this.#maps.length; j++) {

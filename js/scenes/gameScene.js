@@ -1,12 +1,11 @@
 import { Scene } from "../core/scene.js";
 import { GameState } from "../models/gameState.js";
 import { drawMap } from "../utils/drawMap.js";
-import { playerRenderer } from "../ui/playerRenderer.js";
+import { EntityRenderer } from "../ui/EntityRenderer.js";
 import { player } from "../models/player.js";
 import { drawHealthbar } from "../utils/drawHealthbar.js";
 import { Colors } from "../utils/colors.js";
 import { Attacks } from "../models/attacks.js";
-import { AttackCanvas } from "../ui/attackCanvas.js";
 import { Timer } from "../utils/timer.js";
 import { scoreAttack } from "../utils/scoreAttack.js";
 
@@ -18,6 +17,7 @@ export class GameScene extends Scene {
   #attackCanvas;
   #attacks;
   #attackTimer = new Timer(6);
+  #playerRenderer = new EntityRenderer(player, "playerIdle");
 
   constructor(ctx, switcher, attackCanvas) {
     super();
@@ -63,13 +63,13 @@ export class GameScene extends Scene {
   }
 
   update(delta) {
-    playerRenderer.update(delta);
+    this.#playerRenderer.update(delta);
   }
 
   render() {
     this.#ctx.drawImage(this.#background, 0, 0);
 
-    const playerCanvas = playerRenderer.getFrame();
+    const playerCanvas = this.#playerRenderer.getFrame();
     this.#ctx.drawImage(playerCanvas, 150, 250);
 
     const healthbarCanvas = drawHealthbar(
@@ -94,11 +94,15 @@ export class GameScene extends Scene {
     let timer = document.getElementById("drawTimer");
     timer.style.visibility = "visible";
 
+    this.#playerRenderer.playAnimation("playerAttack");
+
     this.#attackTimer.start(
       (remaining) => {
         timer.textContent = remaining;
       },
       () => {
+        this.#playerRenderer.playAnimation("playerIdle");
+
         timer.style.visibility = "hidden";
         const { picCanvas, drawCanvas } = this.#attackCanvas.getBothCanvas();
         const damageTier = scoreAttack(picCanvas, drawCanvas);
