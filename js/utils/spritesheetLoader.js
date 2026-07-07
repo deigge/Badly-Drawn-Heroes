@@ -14,8 +14,8 @@ const REGISTRY = {
     json: "./img/normal_enemy/normal_enemy_spritesheet.json",
   },
   attacks: {
-    sheet: "./img/attacks/light_attack_spritesheet.png",
-    json: "./img/attacks/light_attack_spritesheet.json",
+    sheet: "./img/attacks/attack_spritesheet.png",
+    json: "./img/attacks/attack_spritesheet.json",
   },
 };
 

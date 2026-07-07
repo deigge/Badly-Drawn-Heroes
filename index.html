@@ -13,15 +13,19 @@
     <canvas id="playArea"></canvas>
 
     <div id="interactionElements">
-      <button class="interactionButton" id="lightAttack">Light Attack</button>
-      <button class="interactionButton" id="heavyAttack">Heavy Attack</button>
+      <button class="interactionButton" id="lightAttack" disabled>
+        Light Attack
+      </button>
+      <button class="interactionButton" id="heavyAttack" disabled>
+        Heavy Attack
+      </button>
 
       <div id="playerAttackArea" class="input-canvas-stack">
         <img id="frame" src="img/ui/frame.png" />
       </div>
 
-      <button class="interactionButton" id="block">Block</button>
-      <button class="interactionButton" id="heal">Heal</button>
+      <button class="interactionButton" id="block" disabled>Block</button>
+      <button class="interactionButton" id="heal" disabled>Heal</button>
     </div>
     <div id="drawTimer">60</div>
   </body>

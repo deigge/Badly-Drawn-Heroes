@@ -29,6 +29,12 @@ export class GameScene extends Scene {
     this.#attacks = new Attacks();
     this.#attacks.init();
 
+    document
+      .getElementById("lightAttack")
+      .addEventListener("click", () => this.#loadAttack(true));
+
+    this.#enableButtons();
+
     document.addEventListener("keydown", this.#handleKey);
   }
 
@@ -50,7 +56,7 @@ export class GameScene extends Scene {
       this.#switcher.notify("dead");
       return;
     } else if (e.code === "Space") {
-      this.loadAttack();
+      this.#loadAttack(false);
       return;
     }
     this.render();
@@ -110,8 +116,12 @@ export class GameScene extends Scene {
     );
   }
 
-  loadAttack() {
-    const attackIcon = this.#attacks.getRandomLightAttack();
+  #loadAttack(lightAttack) {
+    let attackIcon;
+    attackIcon = lightAttack
+      ? this.#attacks.getRandomLightAttack()
+      : this.#attacks.getRandomHeavyAttack();
+
     this.#attackCanvas.drawSprite(attackIcon);
     this.#attackCanvas.enableDrawing();
 
@@ -130,6 +140,9 @@ export class GameScene extends Scene {
         timer.style.visibility = "hidden";
         const { picCanvas, drawCanvas } = this.#attackCanvas.getBothCanvas();
         const damageTier = scoreAttack(picCanvas, drawCanvas);
+        this.#attackCanvas.clear();
+
+        this.#attackCanvas.drawScore(damageTier);
 
         const enemies = GameState.map.currentLevel.enemies;
         const target = enemies[0];
@@ -144,7 +157,8 @@ export class GameScene extends Scene {
         }
 
         this.#attackCanvas.disableDrawing();
-        this.#attackCanvas.clear();
+
+        this.#disableButtons();
       },
     );
   }
@@ -156,6 +170,18 @@ export class GameScene extends Scene {
       this.#mapCanvas = drawMap(GameState.map, GameState.map.currentLevelIndex);
       this.#changeBackground();
     }
+  }
+
+  #disableButtons() {
+    document.querySelectorAll(".interactionButton").forEach((button) => {
+      button.disabled = true;
+    });
+  }
+
+  #enableButtons() {
+    document.querySelectorAll(".interactionButton").forEach((button) => {
+      button.disabled = false;
+    });
   }
 
   destroy() {

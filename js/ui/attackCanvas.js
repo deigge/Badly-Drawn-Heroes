@@ -40,15 +40,25 @@ export class AttackCanvas {
 
   drawSprite(spriteCanvas) {
     const size = this.#picCanvas.width;
-    const targetSize = size * 0.8;
-    const offset = (size - targetSize) / 2;
+    const maxSize = size * 0.8;
+
+    const scale = Math.min(
+      maxSize / spriteCanvas.width,
+      maxSize / spriteCanvas.height,
+    );
+    const drawWidth = spriteCanvas.width * scale;
+    const drawHeight = spriteCanvas.height * scale;
+
+    const offsetX = (size - drawWidth) / 2;
+    const offsetY = (size - drawHeight) / 2;
+
     this.#picCtx.clearRect(0, 0, size, size);
     this.#picCtx.drawImage(
       spriteCanvas,
-      offset,
-      offset,
-      targetSize,
-      targetSize,
+      offsetX,
+      offsetY,
+      drawWidth,
+      drawHeight,
     );
   }
 
@@ -92,6 +102,28 @@ export class AttackCanvas {
     this.#drawCtx.stroke();
     this.#pos = newPos;
   };
+
+  drawScore(letter) {
+    const size = this.#picCanvas.width;
+    const maxSize = size * 0.5;
+
+    this.#picCtx.clearRect(0, 0, size, size);
+
+    this.#picCtx.font = `${maxSize}px sans-serif`;
+    const metrics = this.#picCtx.measureText(letter);
+    const textWidth = metrics.width;
+    const textHeight =
+      metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+
+    const scale = Math.min(maxSize / textWidth, maxSize / textHeight);
+    const fontSize = maxSize * scale;
+
+    this.#picCtx.font = `${fontSize}px sans-serif`;
+    this.#picCtx.fillStyle = "#000000";
+    this.#picCtx.textAlign = "center";
+    this.#picCtx.textBaseline = "middle";
+    this.#picCtx.fillText(letter, size / 2, size / 2);
+  }
 
   clear() {
     this.#drawCtx.clearRect(
