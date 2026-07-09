@@ -38,7 +38,19 @@ export class GameScene extends Scene {
 
     document
       .getElementById("lightAttack")
-      .addEventListener("click", () => this.#loadAttack(true));
+      .addEventListener("click", () => this.#lightAttack());
+
+    document
+      .getElementById("heavyAttack")
+      .addEventListener("click", () => this.#heavyAttack());
+
+    document
+      .getElementById("block")
+      .addEventListener("click", () => this.#block());
+
+    document
+      .getElementById("heal")
+      .addEventListener("click", () => this.#heal());
 
     this.#enableButtons();
 
@@ -62,18 +74,6 @@ export class GameScene extends Scene {
     } else if (e.key === "Backspace") {
       this.#switcher.notify("dead");
       return;
-    } else if (e.code === "Space") {
-      this.#loadAttack(false);
-      return;
-    } else if (e.key === "z") {
-      GameState.map.currentLevel.enemies[0].renderer.playOnce(
-        "enemyAttack",
-        () => {
-          GameState.map.currentLevel.enemies[0].renderer.playAnimation(
-            "enemyIdle",
-          );
-        },
-      );
     }
   };
 
@@ -133,11 +133,10 @@ export class GameScene extends Scene {
     );
   }
 
-  #loadAttack(isLightAttack) {
-    let attackIcon;
-    attackIcon = isLightAttack
-      ? this.#attacks.getRandomLightAttack()
-      : this.#attacks.getRandomHeavyAttack();
+  #loadAction(useHeavyIcon, onResolve) {
+    const attackIcon = useHeavyIcon
+      ? this.#attacks.getRandomHeavyAttack()
+      : this.#attacks.getRandomLightAttack();
 
     this.#attackCanvas.drawSprite(attackIcon);
     this.#attackCanvas.enableDrawing();
@@ -153,43 +152,64 @@ export class GameScene extends Scene {
       },
       () => {
         player.renderer.playAnimation("playerIdle");
-
         timer.style.visibility = "hidden";
-        const { picCanvas, drawCanvas } = this.#attackCanvas.getBothCanvas();
-        let damageTier = scoreAttack(picCanvas, drawCanvas);
 
-        GameState.addToScore(pointsForAttack(damageTier, isLightAttack));
+        const { picCanvas, drawCanvas } = this.#attackCanvas.getBothCanvas();
+        const damageTier = scoreAttack(picCanvas, drawCanvas);
+
+        GameState.addToScore(pointsForAttack(damageTier, !useHeavyIcon));
         this.#updateScore();
 
-        if (!isLightAttack) damageTier *= 2;
-
         this.#attackCanvas.clear();
-
         this.#attackCanvas.drawScore(damageTier);
 
-        const enemies = GameState.map.currentLevel.enemies;
-        const target = enemies[0];
-        if (target) {
-          player.dealDamageTo(target, damageTier);
-          if (target.isDead) {
-            enemies.shift();
-            if (enemies.length === 0) {
-              this.#nextLevel();
-            }
-          }
-        }
+        onResolve(damageTier);
 
         this.#attackCanvas.disableDrawing();
-
         this.#disableButtons();
         this.#enemyAttack(GameState.map.currentLevel.enemies);
       },
     );
   }
 
+  #lightAttack() {
+    this.#loadAction(false, (tier) => this.#applyAttackDamage(tier));
+  }
+
+  #heavyAttack() {
+    this.#loadAction(true, (tier) => this.#applyAttackDamage(tier * 2));
+  }
+
+  #block() {
+    this.#loadAction(false, (tier) => {
+      player.damageTakenMultiplier = 1 - tier;
+    });
+  }
+
+  #heal() {
+    this.#loadAction(true, (tier) => {
+      player.heal(Math.round(player.attackPower * tier));
+    });
+  }
+
+  #applyAttackDamage(tier) {
+    const enemies = GameState.map.currentLevel.enemies;
+    const target = enemies[0];
+    if (!target) return;
+
+    player.dealDamageTo(target, tier);
+    if (target.isDead) {
+      enemies.shift();
+      if (enemies.length === 0) {
+        this.#nextLevel();
+      }
+    }
+  }
+
   #enemyAttack(enemies, index = 0) {
     if (index >= enemies.length) {
       this.#enableButtons();
+      player.resetDamageTakenMultiplier();
       return;
     }
     const enemy = enemies[index];

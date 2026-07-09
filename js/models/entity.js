@@ -73,6 +73,13 @@ export class Entity {
     const damageDealt = target.takeDamage(damage);
   }
 
+  heal(amount) {
+    this.#currentHealth = Math.min(
+      this.#maxHealth,
+      this.#currentHealth + amount,
+    );
+  }
+
   get isDead() {
     return this.#currentHealth <= 0;
   }
