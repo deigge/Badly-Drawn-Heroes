@@ -1,14 +1,6 @@
 class GameStateClass {
   #currentMap = null;
-  #playerHealth = 100;
-
-  get playerHealth() {
-    return this.#playerHealth;
-  }
-
-  reset() {
-    this.#playerHealth = 100;
-  }
+  #score = 0;
 
   set map(map) {
     this.#currentMap = map;
@@ -16,6 +8,14 @@ class GameStateClass {
 
   get map() {
     return this.#currentMap;
+  }
+
+  get score() {
+    return this.#score;
+  }
+
+  addToScore(points) {
+    this.#score += points;
   }
 }
 

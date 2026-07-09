@@ -7,6 +7,10 @@ import { Colors } from "../utils/colors.js";
 import { Attacks } from "../models/attacks.js";
 import { Timer } from "../utils/timer.js";
 import { scoreAttack } from "../utils/scoreAttack.js";
+import {
+  pointsForAttack,
+  pointsForLevelCompletion,
+} from "../utils/highscoreCalc.js";
 
 export class GameScene extends Scene {
   #mapCanvas;
@@ -16,6 +20,7 @@ export class GameScene extends Scene {
   #attackCanvas;
   #attacks;
   #attackTimer = new Timer(6);
+  #currentScoreElement;
 
   constructor(ctx, switcher, attackCanvas) {
     super();
@@ -28,6 +33,8 @@ export class GameScene extends Scene {
 
     this.#attacks = new Attacks();
     this.#attacks.init();
+
+    this.#currentScoreElement = document.getElementById("currentScore");
 
     document
       .getElementById("lightAttack")
@@ -58,8 +65,16 @@ export class GameScene extends Scene {
     } else if (e.code === "Space") {
       this.#loadAttack(false);
       return;
+    } else if (e.key === "z") {
+      GameState.map.currentLevel.enemies[0].renderer.playOnce(
+        "enemyAttack",
+        () => {
+          GameState.map.currentLevel.enemies[0].renderer.playAnimation(
+            "enemyIdle",
+          );
+        },
+      );
     }
-    this.render();
   };
 
   #changeBackground() {
@@ -67,6 +82,8 @@ export class GameScene extends Scene {
   }
 
   update(delta) {
+    if (player.isDead) this.#switcher.notify("dead");
+
     player.renderer.update(delta);
 
     GameState.map.currentLevel.enemies.forEach((enemy) => {
@@ -116,9 +133,9 @@ export class GameScene extends Scene {
     );
   }
 
-  #loadAttack(lightAttack) {
+  #loadAttack(isLightAttack) {
     let attackIcon;
-    attackIcon = lightAttack
+    attackIcon = isLightAttack
       ? this.#attacks.getRandomLightAttack()
       : this.#attacks.getRandomHeavyAttack();
 
@@ -139,7 +156,13 @@ export class GameScene extends Scene {
 
         timer.style.visibility = "hidden";
         const { picCanvas, drawCanvas } = this.#attackCanvas.getBothCanvas();
-        const damageTier = scoreAttack(picCanvas, drawCanvas);
+        let damageTier = scoreAttack(picCanvas, drawCanvas);
+
+        GameState.addToScore(pointsForAttack(damageTier, isLightAttack));
+        this.#updateScore();
+
+        if (!isLightAttack) damageTier *= 2;
+
         this.#attackCanvas.clear();
 
         this.#attackCanvas.drawScore(damageTier);
@@ -147,7 +170,7 @@ export class GameScene extends Scene {
         const enemies = GameState.map.currentLevel.enemies;
         const target = enemies[0];
         if (target) {
-          target.takeDamage(player.baseAttack * damageTier);
+          player.dealDamageTo(target, damageTier);
           if (target.isDead) {
             enemies.shift();
             if (enemies.length === 0) {
@@ -159,17 +182,45 @@ export class GameScene extends Scene {
         this.#attackCanvas.disableDrawing();
 
         this.#disableButtons();
+        this.#enemyAttack(GameState.map.currentLevel.enemies);
       },
     );
   }
 
+  #enemyAttack(enemies, index = 0) {
+    if (index >= enemies.length) {
+      this.#enableButtons();
+      return;
+    }
+    const enemy = enemies[index];
+    enemy.renderer.playFinite(
+      "enemyAttack",
+      () => {
+        enemy.dealDamageTo(player);
+        enemy.renderer.playAnimation("enemyIdle");
+        this.#enemyAttack(enemies, index + 1);
+      },
+      2,
+    );
+  }
+
   #nextLevel() {
+    GameState.addToScore(
+      pointsForLevelCompletion(GameState.map.currentLevel.type),
+    );
+    this.#updateScore();
     const nextLevel = GameState.map.nextLevel;
 
     if (nextLevel != null) {
       this.#mapCanvas = drawMap(GameState.map, GameState.map.currentLevelIndex);
       this.#changeBackground();
+    } else {
+      this.#switcher.notify("finished");
     }
+  }
+
+  #updateScore() {
+    this.#currentScoreElement.textContent = GameState.score;
   }
 
   #disableButtons() {

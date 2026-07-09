@@ -50,9 +50,9 @@ function fScore(precision, hitrate) {
 }
 
 function getDamageTier(score) {
-  if (score >= 0.6) return 1.0;
-  if (score >= 0.4) return 0.75;
-  if (score >= 0.2) return 0.5;
+  if (score >= 0.65) return 1.0;
+  if (score >= 0.55) return 0.75;
+  if (score >= 0.3) return 0.5;
   if (score > 0) return 0.25;
   return 0;
 }

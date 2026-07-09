@@ -7,13 +7,22 @@ export class Entity {
   #maxHealth;
   #spriteType;
   #renderer;
-  #baseAttack = 20;
+  #attackPower = 20;
+  #hitChance;
 
-  constructor(spritetype, maxHealth, baseAnimationName) {
+  constructor(
+    spritetype,
+    maxHealth,
+    baseAnimationName,
+    attackPower,
+    hitChance = 1,
+  ) {
     this.#spriteType = spritetype;
 
     this.#maxHealth = maxHealth;
     this.#currentHealth = this.#maxHealth;
+    this.#attackPower = attackPower;
+    this.#hitChance = hitChance;
     this.#renderer = new EntityRenderer(this, baseAnimationName);
   }
 
@@ -36,8 +45,8 @@ export class Entity {
     return this.#maxHealth;
   }
 
-  get baseAttack() {
-    return this.#baseAttack;
+  get attackPower() {
+    return this.#attackPower;
   }
 
   get renderer() {
@@ -54,6 +63,14 @@ export class Entity {
 
   takeDamage(damage) {
     this.#currentHealth = Math.max(0, this.#currentHealth - damage);
+  }
+
+  dealDamageTo(target, multiplier = 1) {
+    const hits = Math.random() < this.#hitChance;
+    if (!hits) return;
+
+    const damage = Math.round(this.#attackPower * multiplier);
+    const damageDealt = target.takeDamage(damage);
   }
 
   get isDead() {
