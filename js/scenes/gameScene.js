@@ -56,9 +56,11 @@ export class GameScene extends Scene {
       this.#nextLevel();
       return;
     } else if (e.key === "1") {
+      document.getElementById("recoveryButton").hidden = true;
       this.#switcher.notify("dead");
       return;
     } else if (e.key === "2") {
+      document.getElementById("recoveryButton").hidden = true;
       this.#switcher.notify("finished");
       return;
     }

@@ -1,3 +1,5 @@
+import { player } from "./player.js";
+
 class GameStateClass {
   #currentMap = null;
   #score = 0;
@@ -16,6 +18,14 @@ class GameStateClass {
 
   addToScore(points) {
     this.#score += points;
+  }
+
+  reset() {
+    this.#currentMap = null;
+    this.#score = 0;
+    player.heal(1000);
+
+    document.getElementById("currentScore").textContent = "0";
   }
 }
 
