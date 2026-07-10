@@ -58,6 +58,17 @@ body {
   min-width: 13rem;
 }
 
+#recoveryButton {
+  position: absolute;
+  z-index: 1000;
+  top: 15rem;
+  left: 65rem;
+  font-size: 1.5rem;
+  padding: 3%;
+  white-space: nowrap;
+  min-width: 13rem;
+}
+
 #debug {
   position: absolute;
   top: 10px;

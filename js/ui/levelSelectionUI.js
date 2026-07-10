@@ -1,6 +1,5 @@
 import { player } from "../models/player.js";
 import { drawMap, NODE_RADIUS } from "../utils/drawMap.js";
-import { EntityRenderer } from "./EntityRenderer.js";
 
 export class LevelSelectionUI {
   #ctx;
