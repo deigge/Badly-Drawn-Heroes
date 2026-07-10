@@ -11,6 +11,7 @@ import {
   pointsForAttack,
   pointsForLevelCompletion,
 } from "../utils/highscoreCalc.js";
+import { LEVEL_TYPES } from "../models/gameLevel.js";
 
 export class GameScene extends Scene {
   #mapCanvas;
@@ -30,6 +31,10 @@ export class GameScene extends Scene {
 
     this.#mapCanvas = drawMap(GameState.map, 0);
     this.#changeBackground();
+
+    if (GameState.map.currentLevel.type == LEVEL_TYPES.RECOVERY) {
+      document.getElementById("recoveryButton").hidden = false;
+    }
 
     this.#attacks = new Attacks();
     this.#attacks.init();
@@ -52,6 +57,10 @@ export class GameScene extends Scene {
       .getElementById("heal")
       .addEventListener("click", () => this.#heal());
 
+    document
+      .getElementById("recoveryButton")
+      .addEventListener("click", () => this.#healRecoveryZone());
+
     this.#enableButtons();
 
     document.addEventListener("keydown", this.#handleKey);
@@ -59,17 +68,7 @@ export class GameScene extends Scene {
 
   #handleKey = (e) => {
     if (e.key === "Enter") {
-      const nextLevel = GameState.map.nextLevel;
-
-      if (nextLevel != null) {
-        this.#mapCanvas = drawMap(
-          GameState.map,
-          GameState.map.currentLevelIndex,
-        );
-        this.#changeBackground();
-      } else {
-        this.#switcher.notify("finished");
-      }
+      this.#nextLevel();
       return;
     } else if (e.key === "Backspace") {
       this.#switcher.notify("dead");
@@ -138,6 +137,7 @@ export class GameScene extends Scene {
       ? this.#attacks.getRandomHeavyAttack()
       : this.#attacks.getRandomLightAttack();
 
+    this.#disableButtons();
     this.#attackCanvas.drawSprite(attackIcon);
     this.#attackCanvas.enableDrawing();
 
@@ -192,6 +192,11 @@ export class GameScene extends Scene {
     });
   }
 
+  #healRecoveryZone() {
+    player.heal(30);
+    this.#nextLevel();
+  }
+
   #applyAttackDamage(tier) {
     const enemies = GameState.map.currentLevel.enemies;
     const target = enemies[0];
@@ -234,6 +239,12 @@ export class GameScene extends Scene {
     if (nextLevel != null) {
       this.#mapCanvas = drawMap(GameState.map, GameState.map.currentLevelIndex);
       this.#changeBackground();
+
+      if (nextLevel.type == LEVEL_TYPES.RECOVERY) {
+        document.getElementById("recoveryButton").hidden = false;
+      } else {
+        document.getElementById("recoveryButton").hidden = true;
+      }
     } else {
       this.#switcher.notify("finished");
     }
