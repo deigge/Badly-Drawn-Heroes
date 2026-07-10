@@ -39,10 +39,7 @@ export class GameLevel {
   async #createEnemies() {
     switch (this.#type) {
       case LEVEL_TYPES.NORMAL:
-        this.#enemies = [
-          await NormalEnemy.create(),
-          await NormalEnemy.create(),
-        ];
+        this.#enemies = await this.#createRandomEnemyGroup();
         break;
       case LEVEL_TYPES.BOSS:
         this.#enemies = []; // TODO: BossEnemy.create()
@@ -51,5 +48,16 @@ export class GameLevel {
         this.#enemies = [];
         break;
     }
+  }
+
+  async #createRandomEnemyGroup() {
+    const enemyCount = Math.random() < 0.5 ? 1 : 2;
+    const enemies = [];
+
+    for (let i = 0; i < enemyCount; i++) {
+      enemies.push(await NormalEnemy.create());
+    }
+
+    return enemies;
   }
 }
