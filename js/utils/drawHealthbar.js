@@ -1,6 +1,6 @@
 import { Colors } from "./colors.js";
 
-export function drawHealthbar(current, max, color = "rgb(212, 96, 96)") {
+export function drawHealthbar(current, max, color = Colors.healthbar.player) {
   const width = 120;
   const height = 20;
   const borderWidth = 2;

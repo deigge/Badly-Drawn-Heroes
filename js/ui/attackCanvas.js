@@ -94,7 +94,7 @@ export class AttackCanvas {
     if (e.buttons !== 1) return;
     const newPos = this.#getMousePos(e);
     this.#drawCtx.beginPath();
-    this.#drawCtx.lineWidth = 8;
+    this.#drawCtx.lineWidth = 6;
     this.#drawCtx.lineCap = "round";
     this.#drawCtx.strokeStyle = "#c0392b";
     this.#drawCtx.moveTo(this.#pos.x, this.#pos.y);

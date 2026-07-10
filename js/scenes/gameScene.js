@@ -12,6 +12,8 @@ import {
   pointsForLevelCompletion,
 } from "../utils/highscoreCalc.js";
 import { LEVEL_TYPES } from "../models/gameLevel.js";
+import { playSound, SOUND } from "../utils/sound.js";
+import { playMusic } from "../utils/music.js";
 
 export class GameScene extends Scene {
   #mapCanvas;
@@ -22,6 +24,7 @@ export class GameScene extends Scene {
   #attacks;
   #attackTimer = new Timer(6);
   #currentScoreElement;
+  #buttonListeners = [];
 
   constructor(ctx, switcher, attackCanvas) {
     super();
@@ -30,7 +33,7 @@ export class GameScene extends Scene {
     this.#attackCanvas = attackCanvas;
 
     this.#mapCanvas = drawMap(GameState.map, 0);
-    this.#changeBackground();
+    this.#changeLevelEnv();
 
     if (GameState.map.currentLevel.type == LEVEL_TYPES.RECOVERY) {
       document.getElementById("recoveryButton").hidden = false;
@@ -41,25 +44,7 @@ export class GameScene extends Scene {
 
     this.#currentScoreElement = document.getElementById("currentScore");
 
-    document
-      .getElementById("lightAttack")
-      .addEventListener("click", () => this.#lightAttack());
-
-    document
-      .getElementById("heavyAttack")
-      .addEventListener("click", () => this.#heavyAttack());
-
-    document
-      .getElementById("block")
-      .addEventListener("click", () => this.#block());
-
-    document
-      .getElementById("heal")
-      .addEventListener("click", () => this.#heal());
-
-    document
-      .getElementById("recoveryButton")
-      .addEventListener("click", () => this.#healRecoveryZone());
+    this.#setButtonEvents();
 
     this.#enableButtons();
 
@@ -70,18 +55,25 @@ export class GameScene extends Scene {
     if (e.key === "Enter") {
       this.#nextLevel();
       return;
-    } else if (e.key === "Backspace") {
+    } else if (e.key === "1") {
       this.#switcher.notify("dead");
+      return;
+    } else if (e.key === "2") {
+      this.#switcher.notify("finished");
       return;
     }
   };
 
-  #changeBackground() {
+  #changeLevelEnv() {
     this.#background.src = GameState.map.currentLevel.backgroundImage;
+    playMusic(GameState.map.currentLevel.backgroundMusicType);
   }
 
   update(delta) {
-    if (player.isDead) this.#switcher.notify("dead");
+    if (player.isDead) {
+      this.#disableButtons();
+      this.#switcher.notify("dead");
+    }
 
     player.renderer.update(delta);
 
@@ -99,7 +91,7 @@ export class GameScene extends Scene {
     const healthbarCanvas = drawHealthbar(
       player.currentHealth,
       player.maxHealth,
-      Colors.level.normal,
+      Colors.healthbar.player,
     );
     this.#ctx.drawImage(healthbarCanvas, 150, this.#ctx.canvas.height - 50);
 
@@ -114,7 +106,7 @@ export class GameScene extends Scene {
       const healthbarCanvas = drawHealthbar(
         enemy.currentHealth,
         enemy.maxHealth,
-        Colors.level.boss,
+        Colors.healthbar.enemy,
       );
       this.#ctx.drawImage(
         healthbarCanvas,
@@ -132,8 +124,8 @@ export class GameScene extends Scene {
     );
   }
 
-  #loadAction(useHeavyIcon, onResolve) {
-    const attackIcon = useHeavyIcon
+  #loadAction(isHeavy, onResolve) {
+    const attackIcon = isHeavy
       ? this.#attacks.getRandomHeavyAttack()
       : this.#attacks.getRandomLightAttack();
 
@@ -143,6 +135,8 @@ export class GameScene extends Scene {
 
     let timer = document.getElementById("drawTimer");
     timer.style.visibility = "visible";
+
+    playSound(SOUND.TICKING);
 
     player.renderer.playAnimation("playerAttack");
 
@@ -157,7 +151,7 @@ export class GameScene extends Scene {
         const { picCanvas, drawCanvas } = this.#attackCanvas.getBothCanvas();
         const damageTier = scoreAttack(picCanvas, drawCanvas);
 
-        GameState.addToScore(pointsForAttack(damageTier, !useHeavyIcon));
+        GameState.addToScore(pointsForAttack(damageTier, !isHeavy));
         this.#updateScore();
 
         this.#attackCanvas.clear();
@@ -173,26 +167,36 @@ export class GameScene extends Scene {
   }
 
   #lightAttack() {
-    this.#loadAction(false, (tier) => this.#applyAttackDamage(tier));
+    this.#loadAction(false, (tier) => {
+      this.#applyAttackDamage(tier);
+      playSound(SOUND.ATTACK_LIGHT);
+    });
   }
 
   #heavyAttack() {
-    this.#loadAction(true, (tier) => this.#applyAttackDamage(tier * 2));
+    this.#loadAction(true, (tier) => {
+      this.#applyAttackDamage(tier * 4);
+      playSound(SOUND.ATTACK_HEAVY);
+    });
   }
 
   #block() {
     this.#loadAction(false, (tier) => {
       player.damageTakenMultiplier = 1 - tier;
+      playSound(SOUND.BLOCK);
     });
   }
 
   #heal() {
     this.#loadAction(true, (tier) => {
       player.heal(Math.round(player.attackPower * tier));
+      playSound(SOUND.HEAL);
     });
   }
 
   #healRecoveryZone() {
+    document.getElementById("recoveryButton").hidden = true;
+    playSound(SOUND.HEAL);
     player.heal(30);
     this.#nextLevel();
   }
@@ -221,6 +225,7 @@ export class GameScene extends Scene {
     enemy.renderer.playFinite(
       "enemyAttack",
       () => {
+        playSound(SOUND.HIT);
         enemy.dealDamageTo(player);
         enemy.renderer.playAnimation("enemyIdle");
         this.#enemyAttack(enemies, index + 1);
@@ -237,17 +242,57 @@ export class GameScene extends Scene {
     const nextLevel = GameState.map.nextLevel;
 
     if (nextLevel != null) {
+      playSound(SOUND.LEVEL_PASSED);
+
       this.#mapCanvas = drawMap(GameState.map, GameState.map.currentLevelIndex);
-      this.#changeBackground();
+      this.#changeLevelEnv();
 
       if (nextLevel.type == LEVEL_TYPES.RECOVERY) {
+        this.#disableButtons();
         document.getElementById("recoveryButton").hidden = false;
       } else {
+        this.#enableButtons();
         document.getElementById("recoveryButton").hidden = true;
       }
     } else {
+      this.#disableButtons();
       this.#switcher.notify("finished");
     }
+  }
+
+  #setButtonEvents() {
+    const buttonIds = [
+      "lightAttack",
+      "heavyAttack",
+      "block",
+      "heal",
+      "recoveryButton",
+    ];
+    const handlers = {
+      lightAttack: () => this.#lightAttack(),
+      heavyAttack: () => this.#heavyAttack(),
+      block: () => this.#block(),
+      heal: () => this.#heal(),
+      recoveryButton: () => this.#healRecoveryZone(),
+    };
+
+    buttonIds.forEach((id) => {
+      const listener = () => {
+        playSound(SOUND.CONFIRM);
+        handlers[id]();
+      };
+
+      document.getElementById(id).addEventListener("click", listener);
+
+      this.#buttonListeners.push({ id, listener });
+    });
+  }
+
+  #removeButtonEvents() {
+    this.#buttonListeners.forEach(({ id, listener }) => {
+      document.getElementById(id).removeEventListener("click", listener);
+    });
+    this.#buttonListeners = [];
   }
 
   #updateScore() {
@@ -268,5 +313,6 @@ export class GameScene extends Scene {
 
   destroy() {
     document.removeEventListener("keydown", this.#handleKey);
+    this.#removeButtonEvents();
   }
 }

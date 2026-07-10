@@ -1,6 +1,7 @@
 import { Scene } from "../core/scene.js";
 import { GameState } from "../models/gameState.js";
 import { drawMap } from "../utils/drawMap.js";
+import { MUSIC, playMusic } from "../utils/music.js";
 
 export class DeadScene extends Scene {
   #mapCanvas;
@@ -20,6 +21,8 @@ export class DeadScene extends Scene {
 
     this.#deadA.src = "../img/ui/dead_screen_a.png";
     this.#deadB.src = "../img/ui/dead_screen_b.png";
+
+    playMusic(MUSIC.GAME_OVER);
   }
 
   update(delta) {}

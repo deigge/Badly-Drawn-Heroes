@@ -1,5 +1,6 @@
 import { player } from "../models/player.js";
 import { drawMap, NODE_RADIUS } from "../utils/drawMap.js";
+import { playSound, SOUND } from "../utils/sound.js";
 
 export class LevelSelectionUI {
   #ctx;
@@ -17,15 +18,20 @@ export class LevelSelectionUI {
   }
 
   #handleKey = (e) => {
-    if (e.key === "ArrowUp")
+    if (e.key === "ArrowUp") {
       this.#selectedIndex = Math.max(0, this.#selectedIndex - 1);
-    if (e.key === "ArrowDown")
+      playSound(SOUND.CHANGE_SELECTION);
+    }
+    if (e.key === "ArrowDown") {
       this.#selectedIndex = Math.min(
         this.#maps.length - 1,
         this.#selectedIndex + 1,
       );
+      playSound(SOUND.CHANGE_SELECTION);
+    }
     if (e.key === "Enter") {
       this.#onSelect(this.#selectedIndex);
+      playSound(SOUND.CONFIRM);
       return;
     }
   };

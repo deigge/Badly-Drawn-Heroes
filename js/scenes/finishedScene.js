@@ -1,6 +1,7 @@
 import { Scene } from "../core/scene.js";
 import { GameState } from "../models/gameState.js";
 import { drawMap } from "../utils/drawMap.js";
+import { MUSIC, playMusic } from "../utils/music.js";
 
 export class FinishedScene extends Scene {
   #mapCanvas;
@@ -20,11 +21,15 @@ export class FinishedScene extends Scene {
 
     this.#finishA.src = "../img/ui/finish_screen_a.png";
     this.#finishB.src = "../img/ui/finish_screen_b.png";
+
+    playMusic(MUSIC.VICTORY);
   }
 
   update(delta) {}
 
   render() {
+    this.#ctx.clearRect(0, 0, this.#ctx.canvas.width, this.#ctx.canvas.height);
+
     const y = 50;
 
     this.#ctx.clearRect(

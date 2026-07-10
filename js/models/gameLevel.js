@@ -1,3 +1,4 @@
+import { MUSIC } from "../utils/music.js";
 import { NormalEnemy } from "./normalEnemy.js";
 
 export const LEVEL_TYPES = {
@@ -9,6 +10,7 @@ export const LEVEL_TYPES = {
 export class GameLevel {
   #type;
   #enemies;
+  #musicType;
 
   constructor(type) {
     if (!Object.values(LEVEL_TYPES).includes(type)) {
@@ -16,6 +18,18 @@ export class GameLevel {
     }
 
     this.#type = type;
+
+    switch (this.#type) {
+      case LEVEL_TYPES.NORMAL:
+        this.#musicType = MUSIC.NORMAL;
+        break;
+      case LEVEL_TYPES.BOSS:
+        this.#musicType = MUSIC.BOSS;
+        break;
+      case LEVEL_TYPES.RECOVERY:
+        this.#musicType = MUSIC.RECOVERY;
+        break;
+    }
   }
 
   static async create(type) {
@@ -34,6 +48,10 @@ export class GameLevel {
 
   get backgroundImage() {
     return `./img/level/${this.#type}_level.png`;
+  }
+
+  get backgroundMusicType() {
+    return this.#musicType;
   }
 
   async #createEnemies() {
