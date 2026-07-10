@@ -92,6 +92,12 @@ body {
   border-radius: 1rem;
 }
 
+#legend {
+  position: absolute;
+  right: 10%;
+  top: 10%;
+}
+
 #drawTimer {
   font-size: 2rem;
   font-weight: bold;
