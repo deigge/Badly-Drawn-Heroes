@@ -1,8 +1,8 @@
 import { SpriteType } from "../utils/spritesheetLoader.js";
 import { Entity } from "./entity.js";
 
-export class NormalEnemy extends Entity {
+export class BossEnemy extends Entity {
   constructor() {
-    super(SpriteType.NORMAL_ENEMY, 200, "enemyIdle", 5, 0.7);
+    super(SpriteType.BOSS_ENEMY, 100, "enemyIdle", 10, 0.8);
   }
 }

@@ -1,4 +1,5 @@
 import { MUSIC } from "../utils/music.js";
+import { BossEnemy } from "./bossEnemy.js";
 import { NormalEnemy } from "./normalEnemy.js";
 
 export const LEVEL_TYPES = {
@@ -60,7 +61,7 @@ export class GameLevel {
         this.#enemies = await this.#createRandomEnemyGroup();
         break;
       case LEVEL_TYPES.BOSS:
-        this.#enemies = []; // TODO: BossEnemy.create()
+        this.#enemies = [await BossEnemy.create()];
         break;
       case LEVEL_TYPES.RECOVERY:
         this.#enemies = [];

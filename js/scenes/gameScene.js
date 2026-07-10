@@ -110,9 +110,13 @@ export class GameScene extends Scene {
         enemy.maxHealth,
         Colors.healthbar.enemy,
       );
+
+      const healthbarX =
+        enemyX + (enemyCanvas.width - healthbarCanvas.width) / 2;
+
       this.#ctx.drawImage(
         healthbarCanvas,
-        enemyX,
+        healthbarX,
         this.#ctx.canvas.height - 50,
       );
 

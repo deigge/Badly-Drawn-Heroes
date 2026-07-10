@@ -1,6 +1,7 @@
 export const SpriteType = {
   PLAYER: "player",
   NORMAL_ENEMY: "normalEnemy",
+  BOSS_ENEMY: "bossEnemy",
   ATTACKS: "attacks",
 };
 
@@ -12,6 +13,10 @@ const REGISTRY = {
   normalEnemy: {
     sheet: "./img/normal_enemy/normal_enemy_spritesheet.png",
     json: "./img/normal_enemy/normal_enemy_spritesheet.json",
+  },
+  bossEnemy: {
+    sheet: "./img/boss_enemy/boss_spritesheet.png",
+    json: "./img/boss_enemy/boss_spritesheet.json",
   },
   attacks: {
     sheet: "./img/attacks/attack_spritesheet.png",
