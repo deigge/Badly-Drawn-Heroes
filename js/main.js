@@ -5,6 +5,7 @@ import { GameScene } from "./scenes/gameScene.js";
 import { SceneSwitcher } from "./core/sceneSwitcher.js";
 import { FinishedScene } from "./scenes/finishedScene.js";
 import { DeadScene } from "./scenes/deadScene.js";
+import { GameState } from "./models/gameState.js";
 
 async function init() {
   const attackCanvas = new AttackCanvas("playerAttackArea");
@@ -15,6 +16,9 @@ async function init() {
 
   const ctx = canvas.getContext("2d");
   ctx.imageSmoothingEnabled = false;
+
+  GameState.highscore = Number(localStorage.getItem("highscore")) || 0;
+  document.getElementById("highscore").textContent = GameState.highscore;
 
   const switcher = new SceneSwitcher();
   const levelSelection = await LevelSelection.create(ctx, switcher);

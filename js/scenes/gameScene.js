@@ -14,6 +14,7 @@ import {
 import { LEVEL_TYPES } from "../models/gameLevel.js";
 import { playSound, SOUND } from "../utils/sound.js";
 import { playMusic } from "../utils/music.js";
+import { updateCurrentScore } from "../utils/scores.js";
 
 export class GameScene extends Scene {
   #mapCanvas;
@@ -23,7 +24,6 @@ export class GameScene extends Scene {
   #attackCanvas;
   #attacks;
   #attackTimer = new Timer(6);
-  #currentScoreElement;
   #buttonListeners = [];
 
   constructor(ctx, switcher, attackCanvas) {
@@ -41,8 +41,6 @@ export class GameScene extends Scene {
 
     this.#attacks = new Attacks();
     this.#attacks.init();
-
-    this.#currentScoreElement = document.getElementById("currentScore");
 
     this.#setButtonEvents();
 
@@ -157,8 +155,7 @@ export class GameScene extends Scene {
         const { picCanvas, drawCanvas } = this.#attackCanvas.getBothCanvas();
         const damageTier = scoreAttack(picCanvas, drawCanvas);
 
-        GameState.addToScore(pointsForAttack(damageTier, !isHeavy));
-        this.#updateScore();
+        updateCurrentScore(pointsForAttack(damageTier, !isHeavy));
 
         this.#attackCanvas.clear();
         this.#attackCanvas.drawScore(damageTier);
@@ -241,10 +238,9 @@ export class GameScene extends Scene {
   }
 
   #nextLevel() {
-    GameState.addToScore(
+    updateCurrentScore(
       pointsForLevelCompletion(GameState.map.currentLevel.type),
     );
-    this.#updateScore();
     const nextLevel = GameState.map.nextLevel;
 
     if (nextLevel != null) {
@@ -299,10 +295,6 @@ export class GameScene extends Scene {
       document.getElementById(id).removeEventListener("click", listener);
     });
     this.#buttonListeners = [];
-  }
-
-  #updateScore() {
-    this.#currentScoreElement.textContent = GameState.score;
   }
 
   #disableButtons() {

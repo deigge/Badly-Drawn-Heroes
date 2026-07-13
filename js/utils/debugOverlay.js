@@ -2,7 +2,7 @@ export class DebugOverlay {
   #el;
   #enabled = true;
 
-  constructor(elementId = "debug") {
+  constructor(elementId = "debugOverlay") {
     this.#el = document.getElementById(elementId);
   }
 

@@ -75,7 +75,7 @@ body {
   padding: 1%;
 }
 
-#score, #debug {
+#highscoreOverlay, #scoreOverlay, #debugOverlay {
   position: absolute;
   padding: 8px;
   background: rgba(0, 0, 0, 0.7);
@@ -85,13 +85,18 @@ body {
   z-index: 1000;
 }
 
-#debug {
+#debugOverlay {
   top: 10px;
   left: 10px;
 }
 
-#score {
+#scoreOverlay {
   top: 100px;
+  left: 10px;
+}
+
+#highscoreOverlay {
+  top: 150px;
   left: 10px;
 }
 

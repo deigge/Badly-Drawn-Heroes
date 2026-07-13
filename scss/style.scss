@@ -96,15 +96,21 @@ body {
   z-index: 1000;
 }
 
-#debug {
+#debugOverlay {
   @extend %info-overlay;
   top: 10px;
   left: 10px;
 }
 
-#score {
+#scoreOverlay {
   @extend %info-overlay;
   top: 100px;
+  left: 10px;
+}
+
+#highscoreOverlay {
+  @extend %info-overlay;
+  top: 150px;
   left: 10px;
 }
 

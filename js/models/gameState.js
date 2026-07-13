@@ -3,6 +3,7 @@ import { player } from "./player.js";
 class GameStateClass {
   #currentMap = null;
   #score = 0;
+  #highscore = 0;
 
   set map(map) {
     this.#currentMap = map;
@@ -14,6 +15,14 @@ class GameStateClass {
 
   get score() {
     return this.#score;
+  }
+
+  get highscore() {
+    return this.#highscore;
+  }
+
+  set highscore(score) {
+    this.#highscore = score;
   }
 
   addToScore(points) {

@@ -1,4 +1,4 @@
-import { DebugOverlay } from "./debugOverlay.js";
+import { DebugOverlay } from "../utils/debugOverlay.js";
 
 let frame = 0;
 let lastTime = 0;

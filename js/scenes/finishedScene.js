@@ -2,6 +2,7 @@ import { Scene } from "../core/scene.js";
 import { GameState } from "../models/gameState.js";
 import { drawMap } from "../utils/drawMap.js";
 import { MUSIC, playMusic, stopMusic } from "../utils/music.js";
+import { updateHighscore } from "../utils/scores.js";
 import { playSound, SOUND } from "../utils/sound.js";
 
 export class FinishedScene extends Scene {
@@ -24,6 +25,8 @@ export class FinishedScene extends Scene {
     this.#finishB.src = "../img/ui/finish_screen_b.png";
 
     playMusic(MUSIC.VICTORY);
+
+    updateHighscore();
 
     document.getElementById("restartButton").hidden = false;
 
