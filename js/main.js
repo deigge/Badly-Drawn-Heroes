@@ -50,6 +50,7 @@ async function init() {
   });
 
   loadingProgress.hidden = true;
+
   startButton.hidden = false;
 
   startButton.addEventListener("click", () => {

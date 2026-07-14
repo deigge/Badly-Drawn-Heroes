@@ -1,7 +1,17 @@
 import { Colors } from "./colors.js";
 
+/** Radius (in px) of each level node drawn on the map. */
 export const NODE_RADIUS = 6;
 
+/**
+ * Renders a map as a horizontal row of connected nodes, one per level,
+ * color-coded by level type. Optionally highlights one node (e.g. the
+ * currently selected or active level) with a thicker border.
+ *
+ * @param {import("../models/gameMap.js").GameMap} map - The map to render.
+ * @param {number | null} [selectedLevelIndex=null] - Index of the level to highlight, if any.
+ * @returns {HTMLCanvasElement} Canvas containing the rendered map.
+ */
 export function drawMap(map, selectedLevelIndex = null) {
   const xSpacing = 80;
   const nodeRadius = NODE_RADIUS;
@@ -21,6 +31,7 @@ export function drawMap(map, selectedLevelIndex = null) {
   const centerY = canvas.height / 2;
 
   for (let i = 0; i < levelCount; i++) {
+    // Connecting line to the next node (skipped after the last node).
     if (!(i == levelCount - 1)) {
       ctx.beginPath();
       ctx.moveTo(x, centerY);

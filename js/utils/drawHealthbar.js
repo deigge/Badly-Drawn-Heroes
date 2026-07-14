@@ -1,5 +1,13 @@
 import { Colors } from "./colors.js";
 
+/**
+ * Renders a bordered health bar (background + filled portion) onto a new canvas.
+ *
+ * @param {number} current - Current health value.
+ * @param {number} max - Maximum health value.
+ * @param {string} [color=Colors.healthbar.player] - Fill color for the current-health portion.
+ * @returns {HTMLCanvasElement} Canvas containing the rendered health bar.
+ */
 export function drawHealthbar(current, max, color = Colors.healthbar.player) {
   const width = 120;
   const height = 20;
@@ -14,11 +22,11 @@ export function drawHealthbar(current, max, color = Colors.healthbar.player) {
   const innerWidth = width - borderWidth * 2;
   const innerHeight = height - borderWidth * 2;
 
-  // Hintergrund (verlorenes Leben)
+  // Background (lost health)
   ctx.fillStyle = Colors.healthbar.background;
   ctx.fillRect(borderWidth, borderWidth, innerWidth, innerHeight);
 
-  // Vordergrund (aktuelles Leben)
+  // Foreground (current health)
   ctx.fillStyle = color;
   ctx.fillRect(borderWidth, borderWidth, innerWidth * ratio, innerHeight);
 

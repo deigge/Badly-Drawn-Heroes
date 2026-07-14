@@ -1,3 +1,4 @@
+/** Sound effects used throughout the game. */
 export const SOUND = {
   ATTACK_LIGHT: new Audio("mp3/sounds/attack_light.mp3"),
   ATTACK_HEAVY: new Audio("mp3/sounds/attack_heavy.mp3"),
@@ -14,15 +15,22 @@ Object.values(SOUND).forEach((track) => {
   track.volume = 0.1;
 });
 
+/**
+ * Plays a sound effect from the start, ignoring any errors that occur
+ * (e.g. if the browser blocks autoplay).
+ *
+ * @param {HTMLAudioElement} sound - One of the sounds from `SOUND`.
+ * @returns {void}
+ */
 export function playSound(sound) {
   if (!sound) {
-    console.warn("playSound: kein gültiges Sound-Objekt übergeben");
+    console.warn("playSound: no valid sound object provided");
     return;
   }
 
   sound.currentTime = 0;
 
   sound.play().catch((error) => {
-    console.warn("Sound konnte nicht abgespielt werden:", error);
+    console.warn("Failed to play sound:", error);
   });
 }

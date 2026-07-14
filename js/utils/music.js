@@ -1,3 +1,4 @@
+/** Background music tracks for each level type plus victory/game-over stings. */
 export const MUSIC = {
   NORMAL: new Audio("mp3/music/normal_background.mp3"),
   BOSS: new Audio("mp3/music/boss_background.mp3"),
@@ -8,11 +9,19 @@ export const MUSIC = {
 
 Object.values(MUSIC).forEach((track) => {
   track.loop = true;
-  track.volume = 0.1;
+  track.volume = 0.15;
 });
 
+/** The currently playing track, if any. */
 let currentTrack = null;
 
+/**
+ * Plays the given track, stopping and resetting whatever was playing
+ * before. No-op if the requested track is already playing.
+ *
+ * @param {HTMLAudioElement} track - One of the tracks from `MUSIC`.
+ * @returns {void}
+ */
 export function playMusic(track) {
   if (currentTrack === track) return;
 
@@ -21,10 +30,15 @@ export function playMusic(track) {
   currentTrack = track;
   currentTrack.currentTime = 0;
   currentTrack.play().catch((error) => {
-    console.warn("Musik konnte nicht abgespielt werden:", error);
+    console.warn("Failed to play music:", error);
   });
 }
 
+/**
+ * Stops and resets the currently playing track, if any.
+ *
+ * @returns {void}
+ */
 export function stopMusic() {
   if (!currentTrack) return;
   currentTrack.pause();
