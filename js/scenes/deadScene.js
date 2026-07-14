@@ -4,6 +4,11 @@ import { drawMap } from "../utils/drawMap.js";
 import { MUSIC, playMusic } from "../utils/music.js";
 import { updateHighscore } from "../utils/scores.js";
 
+/**
+ * Shown when the player dies. Displays a small looping animation and the
+ * map, showing how far the player got before dying. Finalizes the high
+ * score for this run.
+ */
 export class DeadScene extends Scene {
   #mapCanvas;
   #switcher;
@@ -13,6 +18,10 @@ export class DeadScene extends Scene {
   #deadA = new Image();
   #deadB = new Image();
 
+  /**
+   * @param {CanvasRenderingContext2D} ctx - Canvas context to render into.
+   * @param {import("../core/sceneSwitcher.js").SceneSwitcher} switcher - Used to notify when this scene is done.
+   */
   constructor(ctx, switcher) {
     super();
     this.#ctx = ctx;
@@ -41,6 +50,7 @@ export class DeadScene extends Scene {
     );
 
     this.#frame++;
+    // Simple two-frame flip-flop animation: switch image every 30 rendered frames.
     const img =
       Math.floor(this.#frame / 30) % 2 === 0 ? this.#deadA : this.#deadB;
 

@@ -5,6 +5,11 @@ import { MUSIC, playMusic, stopMusic } from "../utils/music.js";
 import { updateHighscore } from "../utils/scores.js";
 import { playSound, SOUND } from "../utils/sound.js";
 
+/**
+ * Shown when the player successfully completes a map. Displays a small
+ * looping victory animation and the map, finalizes the high score, and
+ * offers a restart button that resets the game and returns to level selection.
+ */
 export class FinishedScene extends Scene {
   #mapCanvas;
   #switcher;
@@ -14,6 +19,10 @@ export class FinishedScene extends Scene {
   #finishA = new Image();
   #finishB = new Image();
 
+  /**
+   * @param {CanvasRenderingContext2D} ctx - Canvas context to render into.
+   * @param {import("../core/sceneSwitcher.js").SceneSwitcher} switcher - Used to notify when this scene is done.
+   */
   constructor(ctx, switcher) {
     super();
     this.#ctx = ctx;
@@ -54,6 +63,7 @@ export class FinishedScene extends Scene {
     );
 
     this.#frame++;
+    // Simple two-frame flip-flop animation: switch image every 30 rendered frames.
     const img =
       Math.floor(this.#frame / 30) % 2 === 0 ? this.#finishA : this.#finishB;
 

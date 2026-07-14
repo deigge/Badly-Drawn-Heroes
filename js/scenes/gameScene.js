@@ -16,6 +16,11 @@ import { playSound, SOUND } from "../utils/sound.js";
 import { playMusic } from "../utils/music.js";
 import { updateCurrentScore } from "../utils/scores.js";
 
+/**
+ * The main combat scene: renders the player, current enemies, and map
+ * progress, and drives the drawing-based combat actions (light/heavy
+ * attack, block, heal) as well as level/map progression.
+ */
 export class GameScene extends Scene {
   #mapCanvas;
   #switcher;
@@ -26,6 +31,11 @@ export class GameScene extends Scene {
   #attackTimer = new Timer(6);
   #buttonListeners = [];
 
+  /**
+   * @param {CanvasRenderingContext2D} ctx - Canvas context to render into.
+   * @param {import("../core/sceneSwitcher.js").SceneSwitcher} switcher - Used to notify when the scene ends (dead/finished).
+   * @param {import("../ui/attackCanvas.js").AttackCanvas} attackCanvas - Canvas used for the drawing minigame.
+   */
   constructor(ctx, switcher, attackCanvas) {
     super();
     this.#ctx = ctx;
@@ -49,6 +59,13 @@ export class GameScene extends Scene {
     document.addEventListener("keydown", this.#handleKey);
   }
 
+  /**
+   * Debug/dev shortcut keys: Enter skips to the next level, "1"/"2" force
+   * the dead/finished scene directly.
+   *
+   * @param {KeyboardEvent} e
+   * @returns {void}
+   */
   #handleKey = (e) => {
     if (e.key === "Enter") {
       this.#nextLevel();
@@ -64,6 +81,11 @@ export class GameScene extends Scene {
     }
   };
 
+  /**
+   * Updates the background image and music to match the current level.
+   *
+   * @returns {void}
+   */
   #changeLevelEnv() {
     this.#background.src = GameState.map.currentLevel.backgroundImage;
     playMusic(GameState.map.currentLevel.backgroundMusicType);
@@ -128,6 +150,18 @@ export class GameScene extends Scene {
     );
   }
 
+  /**
+   * Shared flow for every drawing-based combat action: shows a random
+   * attack template on the draw canvas, disables buttons while the player
+   * draws, and once the timer runs out, scores the drawing, awards points
+   * (only relevant for attacks), invokes `onResolve` with the resulting
+   * damage tier so the caller can apply its specific effect, then lets
+   * enemies retaliate.
+   *
+   * @param {boolean} isHeavy - Whether to use the heavy-attack template/scoring.
+   * @param {(tier: number) => void} onResolve - Called with the resulting damage tier (0–1) once drawing time is up.
+   * @returns {void}
+   */
   #loadAction(isHeavy, onResolve) {
     const attackIcon = isHeavy
       ? this.#attacks.getRandomHeavyAttack()
@@ -177,6 +211,8 @@ export class GameScene extends Scene {
   }
 
   #heavyAttack() {
+    // Heavy attacks deal 4x the base damage of the tier, on top of the
+    // stronger heavy-attack template used in #loadAction.
     this.#loadAction(true, (tier) => {
       this.#applyAttackDamage(tier * 4);
       playSound(SOUND.ATTACK_HEAVY);
@@ -197,6 +233,12 @@ export class GameScene extends Scene {
     });
   }
 
+  /**
+   * Handles the recovery-level heal button: heals a flat amount and
+   * immediately advances to the next level (no drawing minigame).
+   *
+   * @returns {void}
+   */
   #healRecoveryZone() {
     document.getElementById("recoveryButton").hidden = true;
     playSound(SOUND.HEAL);
@@ -204,6 +246,13 @@ export class GameScene extends Scene {
     this.#nextLevel();
   }
 
+  /**
+   * Applies attack damage to the first (frontmost) enemy, removes it if
+   * defeated, and advances to the next level once all enemies are dead.
+   *
+   * @param {number} tier - Damage multiplier from the drawing accuracy tier.
+   * @returns {void}
+   */
   #applyAttackDamage(tier) {
     const enemies = GameState.map.currentLevel.enemies;
     const target = enemies[0];
@@ -218,6 +267,16 @@ export class GameScene extends Scene {
     }
   }
 
+  /**
+   * Lets enemies attack the player one after another. Recurses through the
+   * enemy list so each enemy's attack animation finishes before the next
+   * one starts; re-enables buttons and resets the block multiplier once
+   * every enemy has attacked.
+   *
+   * @param {import("../models/entity.js").Entity[]} enemies - Enemies that get to attack.
+   * @param {number} [index=0] - Index of the enemy currently attacking.
+   * @returns {void}
+   */
   #enemyAttack(enemies, index = 0) {
     if (index >= enemies.length) {
       this.#enableButtons();
@@ -231,12 +290,19 @@ export class GameScene extends Scene {
         playSound(SOUND.HIT);
         enemy.dealDamageTo(player);
         enemy.renderer.playAnimation("enemyIdle");
-        this.#enemyAttack(enemies, index + 1);
+        this.#enemyAttack(enemies, index + 1); // attack with the next enemy once this one's animation finishes
       },
       2,
     );
   }
 
+  /**
+   * Awards level-completion points and advances `GameState.map` to the
+   * next level, updating background/music/UI accordingly. If there is no
+   * next level, the map is complete and the scene switches to "finished".
+   *
+   * @returns {void}
+   */
   #nextLevel() {
     updateCurrentScore(
       pointsForLevelCompletion(GameState.map.currentLevel.type),
@@ -262,6 +328,12 @@ export class GameScene extends Scene {
     }
   }
 
+  /**
+   * Wires up click listeners for all combat/recovery buttons, tracking
+   * them so they can be cleanly removed again in `#removeButtonEvents`.
+   *
+   * @returns {void}
+   */
   #setButtonEvents() {
     const buttonIds = [
       "lightAttack",
@@ -290,6 +362,11 @@ export class GameScene extends Scene {
     });
   }
 
+  /**
+   * Removes all listeners registered by `#setButtonEvents`.
+   *
+   * @returns {void}
+   */
   #removeButtonEvents() {
     this.#buttonListeners.forEach(({ id, listener }) => {
       document.getElementById(id).removeEventListener("click", listener);
