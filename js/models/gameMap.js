@@ -1,4 +1,9 @@
 import { GameLevel, LEVEL_TYPES } from "./gameLevel.js";
+
+/**
+ * A full playthrough map: a shuffled sequence of levels (normal, boss,
+ * recovery) with a fixed total count and a random mix of boss/recovery levels.
+ */
 export class GameMap {
   static #TOTAL_LEVELS = 6;
 
@@ -12,14 +17,23 @@ export class GameMap {
   #currentlevel;
   #currentLevelIndex = 0;
 
+  /**
+   * Creates and generates a full map.
+   *
+   * @returns {Promise<GameMap>} The generated map, ready to play.
+   */
   static async create() {
     const map = new this();
     await map.#generate();
     return map;
   }
 
-  // ---------- generation ----------
-
+  /**
+   * Determines how many of each level type to create, instantiates them
+   * all in parallel, shuffles the order, and sets the first level as current.
+   *
+   * @returns {Promise<void>}
+   */
   async #generate() {
     const bossCount = GameMap.#randInt(GameMap.#BOSS_MIN, GameMap.#BOSS_MAX);
     const recoveryCount = GameMap.#randInt(
@@ -28,6 +42,8 @@ export class GameMap {
     );
     const normalCount = GameMap.#TOTAL_LEVELS - bossCount - recoveryCount;
 
+    // Build three arrays of placeholder slots (one per level type) and create
+    // a level for each slot in parallel, then flatten them into one list.
     const levels = await Promise.all([
       ...Array(normalCount)
         .fill()
@@ -44,26 +60,38 @@ export class GameMap {
     this.#currentlevel = this.#level[0];
   }
 
-  // ---------- helpers ----------
-
+  /**
+   * @param {number} min - Inclusive lower bound.
+   * @param {number} max - Inclusive upper bound.
+   * @returns {number} A random integer between `min` and `max`.
+   */
   static #randInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
+  /**
+   * Randomly reorders an array in place using the Fisher–Yates shuffle.
+   *
+   * @template T
+   * @param {T[]} array - Array to shuffle.
+   * @returns {T[]} The same array, shuffled.
+   */
   static #shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
+      [array[i], array[j]] = [array[j], array[i]]; // swap array[i] and array[j]
     }
     return array;
   }
-
-  // ---------- public ----------
 
   get allLevel() {
     return this.#level;
   }
 
+  /**
+   * @param {number} index - Zero-based level index.
+   * @returns {GameLevel} The level at the given index.
+   */
   getLevel(index) {
     return this.#level[index];
   }
@@ -80,6 +108,12 @@ export class GameMap {
     return this.#currentLevelIndex;
   }
 
+  /**
+   * Advances to and returns the next level, or `null` if the map is complete.
+   * Has a side effect: updates `currentLevel`/`currentLevelIndex` when advancing.
+   *
+   * @returns {GameLevel | null}
+   */
   get nextLevel() {
     if (this.hasNextLevel()) {
       this.#currentLevelIndex++;
@@ -89,6 +123,9 @@ export class GameMap {
     return null;
   }
 
+  /**
+   * @returns {boolean} Whether there is a level after the current one.
+   */
   hasNextLevel() {
     return this.#currentLevelIndex < this.#level.length - 1;
   }
