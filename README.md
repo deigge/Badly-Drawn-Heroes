@@ -1,6 +1,6 @@
 <h1 align="center">Badly Drawn Hero</h1>
 <p align="center">
-  <img src="./img/normal_enemy/sprites/enemy_idle_frame_2.png" width="400">
+  <img src="./img/normal_enemy/sprites/enemy_idle_frame_2.png" width="100">
 </p>
 
 A small browser game built with JavaScript and HTML5 Canvas.
