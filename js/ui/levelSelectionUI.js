@@ -2,12 +2,22 @@ import { player } from "../models/player.js";
 import { drawMap, NODE_RADIUS } from "../utils/drawMap.js";
 import { playSound, SOUND } from "../utils/sound.js";
 
+/**
+ * Renders the map-selection list and handles keyboard navigation/selection.
+ * Purely presentational/input logic; delegates the actual selection
+ * decision back to `LevelSelection` via the `onSelect` callback.
+ */
 export class LevelSelectionUI {
   #ctx;
   #maps;
   #onSelect;
   #selectedIndex = 0;
 
+  /**
+   * @param {CanvasRenderingContext2D} ctx - Canvas context to render into.
+   * @param {import("../models/gameMap.js").GameMap[]} maps - Maps to choose from.
+   * @param {(index: number) => void} onSelect - Called with the chosen map's index on confirm.
+   */
   constructor(ctx, maps, onSelect) {
     this.#ctx = ctx;
     this.#maps = maps;
@@ -17,6 +27,12 @@ export class LevelSelectionUI {
     this.render();
   }
 
+  /**
+   * Handles up/down navigation and confirming the current selection.
+   *
+   * @param {KeyboardEvent} e
+   * @returns {void}
+   */
   #handleKey = (e) => {
     if (e.key === "ArrowUp") {
       this.#selectedIndex = Math.max(0, this.#selectedIndex - 1);
@@ -40,6 +56,12 @@ export class LevelSelectionUI {
     player.renderer.update(delta);
   }
 
+  /**
+   * Draws the player preview and the list of selectable maps, including a
+   * triangular cursor indicating the currently selected map.
+   *
+   * @returns {void}
+   */
   render() {
     const xStart = 450;
     const yStart = 120;
@@ -65,12 +87,12 @@ export class LevelSelectionUI {
         cursorY + ySpacing * 2 + 15,
       );
 
-      //Cursor
+      // Cursor: small triangle pointing right, drawn only next to the selected map.
       if (this.#selectedIndex == j) {
         this.#ctx.beginPath();
-        this.#ctx.moveTo(cursorX, cursorY - 12); // oben links
-        this.#ctx.lineTo(cursorX + 16, cursorY); // spitze rechts
-        this.#ctx.lineTo(cursorX, cursorY + 12); // unten links
+        this.#ctx.moveTo(cursorX, cursorY - 12); // top-left
+        this.#ctx.lineTo(cursorX + 16, cursorY); // tip (right)
+        this.#ctx.lineTo(cursorX, cursorY + 12); // bottom-left
         this.#ctx.closePath();
         this.#ctx.fillStyle = "purple";
         this.#ctx.fill();
