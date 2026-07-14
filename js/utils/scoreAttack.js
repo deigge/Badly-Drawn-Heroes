@@ -1,4 +1,4 @@
-const threshold = 10;
+const threshold = 80;
 
 export function scoreAttack(picCanvas, drawCanvas) {
   let intersection = 0;
@@ -50,9 +50,9 @@ function fScore(precision, hitrate) {
 }
 
 function getDamageTier(score) {
-  if (score >= 0.6) return 1.0;
+  if (score >= 0.7) return 1.0;
   if (score >= 0.5) return 0.75;
-  if (score >= 0.45) return 0.5;
-  if (score > 0) return 0.25;
+  if (score >= 0.3) return 0.5;
+  if (score > 0.1) return 0.25;
   return 0;
 }

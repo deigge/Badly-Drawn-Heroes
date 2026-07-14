@@ -3,6 +3,6 @@ import { Entity } from "./entity.js";
 
 export class NormalEnemy extends Entity {
   constructor() {
-    super(SpriteType.NORMAL_ENEMY, 200, "enemyIdle", 5, 0.7);
+    super(SpriteType.NORMAL_ENEMY, 80, "enemyIdle", 5, 0.7);
   }
 }
