@@ -48,7 +48,7 @@ body {
   gap: 2.5rem;
 }
 
-.interactionButton, #restartButton, #recoveryButton {
+#startButton, .interactionButton, #restartButton, #recoveryButton {
   font-size: 1.5rem;
   white-space: nowrap;
   min-width: 13rem;
@@ -126,4 +126,21 @@ body {
   border-width: 0.2rem;
   border-color: black;
   visibility: hidden;
+}
+
+#loadingScreen {
+  font-size: 2rem;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgb(255, 241, 212);
+  color: black;
+  z-index: 1001;
+}
+
+#loadingScreen[hidden] {
+  display: none;
 }/*# sourceMappingURL=style.css.map */

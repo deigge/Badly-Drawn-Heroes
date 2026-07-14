@@ -1,5 +1,5 @@
 import { EntityRenderer } from "../ui/EntityRenderer.js";
-import { SpriteSheetLoader } from "../utils/spritesheetLoader.js";
+import { spriteSheetLoader } from "../utils/spritesheetLoader.js";
 
 export class Entity {
   #spritesheet = null;
@@ -27,8 +27,7 @@ export class Entity {
   }
 
   async init() {
-    const loader = new SpriteSheetLoader();
-    this.#spritesheet = await loader.load(this.#spriteType);
+    this.#spritesheet = await spriteSheetLoader.load(this.#spriteType);
   }
 
   static async create() {

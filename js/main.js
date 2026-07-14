@@ -6,8 +6,23 @@ import { SceneSwitcher } from "./core/sceneSwitcher.js";
 import { FinishedScene } from "./scenes/finishedScene.js";
 import { DeadScene } from "./scenes/deadScene.js";
 import { GameState } from "./models/gameState.js";
+import { preloadAssets } from "./core/assetPreload.js";
 
 async function init() {
+  const loadingScreen = document.getElementById("loadingScreen");
+  const loadingProgress = document.getElementById("loadingProgress");
+  const startButton = document.getElementById("startButton");
+
+  try {
+    await preloadAssets((loaded, total) => {
+      loadingProgress.value = loaded / total;
+    });
+  } catch (err) {
+    loadingScreen.textContent = "Fehler beim Laden. Bitte Seite neu laden.";
+    console.error(err);
+    return;
+  }
+
   const attackCanvas = new AttackCanvas("playerAttackArea");
   const canvas = document.getElementById("playArea");
 
@@ -34,7 +49,13 @@ async function init() {
       gameloop.setScene(await LevelSelection.create(ctx, switcher));
   });
 
-  gameloop.start();
+  loadingProgress.hidden = true;
+  startButton.hidden = false;
+
+  startButton.addEventListener("click", () => {
+    loadingScreen.hidden = true;
+    gameloop.start();
+  });
 }
 
 init();

@@ -44,12 +44,24 @@ class SpriteSheet {
   }
 }
 
-export class SpriteSheetLoader {
+class SpriteSheetLoader {
+  #cache = new Map();
+
   async load(character) {
+    if (this.#cache.has(character)) {
+      return this.#cache.get(character);
+    }
+
     const entry = REGISTRY[character];
-    const json = await fetch(entry.json).then((r) => r.json());
+    const json = await fetch(entry.json).then((r) => {
+      if (!r.ok) throw new Error(`Failed to load ${entry.json}`);
+      return r.json();
+    });
     const image = await this.#loadImage(entry.sheet);
-    return new SpriteSheet(image, this.#groupFrames(json));
+    const sheet = new SpriteSheet(image, this.#groupFrames(json));
+
+    this.#cache.set(character, sheet);
+    return sheet;
   }
 
   #groupFrames(frames) {
@@ -71,3 +83,5 @@ export class SpriteSheetLoader {
     });
   }
 }
+
+export const spriteSheetLoader = new SpriteSheetLoader();

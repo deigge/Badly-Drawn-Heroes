@@ -1,12 +1,10 @@
-import { SpriteSheetLoader, SpriteType } from "../utils/spritesheetLoader.js";
+import { spriteSheetLoader, SpriteType } from "../utils/spritesheetLoader.js";
 import { frameToCanvas } from "../utils/frameToCanvas.js";
-
 export class Attacks {
   #spritesheet;
 
   async init() {
-    const loader = new SpriteSheetLoader();
-    this.#spritesheet = await loader.load(SpriteType.ATTACKS);
+    this.#spritesheet = await spriteSheetLoader.load(SpriteType.ATTACKS);
   }
 
   #getRandomAttack(frameName) {

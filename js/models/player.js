@@ -22,4 +22,9 @@ class Player extends Entity {
   }
 }
 
-export const player = await Player.create();
+export let player;
+
+export async function createPlayer() {
+  player = await Player.create();
+  return player;
+}
